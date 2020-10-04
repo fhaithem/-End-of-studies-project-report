@@ -1,0 +1,73 @@
+%===== File containing the back cover of the document =====%
+%                                                          %
+%
+%==========================================================%
+
+%== It's advised to not modify the content of this file ===%
+% To set your information, go to global_config.tex file    %
+%==========================================================%
+
+\thispagestyle{backcover}
+\newgeometry{bottom=25mm,left=15mm,top=20mm,right=15mm}
+
+\begin{changemargin}{3mm}{0cm}
+    \begin{minipage}[c]{0.96\columnwidth}
+        \selectlanguage{arabic}
+        \noindent
+        {\LARGE\textbf{ملخّص}}
+        \vskip1mm
+            \begingroup
+                \small
+                \@arabicAbstract
+            \endgroup
+        \vskip1mm
+        {\textbf{كلمات مفاتيح : } 
+            \begingroup
+                \@arabicAbstractKeywords
+            \endgroup
+        }
+        
+        {\ifthenelse{\boolean{wantToTypeCompanyAddress}}
+        {% IF TRUE
+            \vskip5mm
+        }{\vskip5mm}}
+        \noindent
+        
+        \selectlanguage{french}
+        
+        {\LARGE\textbf{Résumé}}
+        \vskip1mm
+            \begingroup
+                \small
+                \@frenchAbstract
+            \endgroup
+        \vskip1mm
+        {\textbf{Mots clés : }
+            \begingroup
+                \@frenchAbstractKeywords
+            \endgroup
+        }
+        
+        {\ifthenelse{\boolean{wantToTypeCompanyAddress}}
+        {% IF TRUE
+            \vskip5mm
+        }{\vskip8mm}}
+        \noindent
+        
+        \selectlanguage{english}
+        {\LARGE\textbf{Abstract}}
+        \vskip1mm
+            \begingroup
+                \small
+                \@englishAbstract
+            \endgroup
+        \vskip1mm
+        {\textbf{Keywords : }
+            \begingroup
+                \@englishAbstractKeywords
+            \endgroup
+        }
+   
+    \end{minipage}
+    
+\end{changemargin}

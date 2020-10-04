@@ -1,0 +1,97 @@
+
+%========= File containing the main LaTex document ========%
+%                                                         
+%
+%
+%==========================================================%
+
+%\documentclass[pfe]{./tpl/isipfe}
+\documentclass[pfe,french]{./tpl/isipfe}
+\PassOptionsToPackage{russian}{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\graphicspath{{./img/}}
+
+
+\usepackage{array}
+\usepackage{lipsum}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{bbding}
+\usepackage{hyperref}
+\usepackage[justification=centering]{caption}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\input{./tpl/new_commands}
+
+\begin{document}
+    \input{global_config}
+    
+    \frontmatter
+        \input{tpl/cover_page}
+        \include{tpl/cover_page_black}
+        \input{tpl/signatures}
+        
+        \setcounter{page}{1}
+        \input{dedicaces}
+        \thispagestyle{frontmatter}
+        \input{remerciement}
+        \thispagestyle{frontmatter}
+        
+        \setcounter{secnumdepth}{4}
+        \setcounter{tocdepth}{3}
+        \dominitoc
+        \dominitoc
+        \tableofcontents
+        \adjustmtc
+        \thispagestyle{frontmatter}
+        
+        \listoffigures
+        \thispagestyle{frontmatter}
+        \listoftables
+        \thispagestyle{frontmatter}
+        \input{acronymes}
+        \thispagestyle{frontmatter}
+        
+
+    
+    \mainmatter
+        \input{introduction}
+        \clearpage
+        
+        \input{chap_01}
+        \clearpage
+        
+        \input{Chap_02}
+        \clearpage
+        
+        \input{chap_04}
+        \clearpage
+        
+        \input{chap_03}
+        \clearpage
+        
+        \input{chap_05}
+        \clearpage
+        
+        \input{conclusion}
+        \clearpage
+        
+       
+        \renewcommand\bibname{Nétographie}  
+     
+        \printbibliography[heading=bibintoc]
+
+        
+        \input{annexes}
+        \clearpage
+
+    \backmatter
+        \input{./tpl/resume}
+    
+\end{document}

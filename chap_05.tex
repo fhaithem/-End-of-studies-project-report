@@ -1,0 +1,277 @@
+\chapter{Phase 3 : Monitoring}
+
+\section*{Introduction}
+Après avoir étudié la première et la deuxième phase de notre projet, nous entamons la phase de Monitoring de notre système de bot. Dans ce chapitre nous commençons par l’analyse fonctionnelle et la conception de cette phase. Ensuite, nous enchaînons par le fonctionnement technique. Enfin, nous présentons la réalisation de cette phase.
+
+\section{Conception}
+\subsection{Diagramme de cas d’utilisation raffiné}
+\noinden Nous allons commencer par le raffinement de cas d'utilisation "Superviser le Monitoring" .
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=15cm, height=7.5cm]{images/UseCaseMonitoring.PNG}
+            \caption{Raffinement de cas d'utilisation "Superviser le Monitoring"}
+            \label{fig:UseCase}  
+        \end{figure}
+\subsection{Description textuelle}
+\noindent Le tableau \ref{tab:Monitor} montre la descriton textuelle de cas d'utilisation "Superviser le Monitoring".
+\begin{table}[H]
+      \captionsetup{justification=raggedright,singlelinecheck=false}
+      \centering
+        \caption{Description textuelle du cas d'utilisation "Superviser le Monitoring"} 
+		\label{tab:Monitor}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+Acteurs & Utilisateur, Administrateur\\
+\hline
+But &  Superviser les erreurs et valider les Items \\
+\hline
+Pré condition &  Données extraites  \\
+\hline
+Scénario nominal  & \begin{minipage}{1\linewidth}
+    \vspace{0.7}
+      \begin{enumerate}
+      \item L'utilisateur doit intervenir en cas de dysfonctionnement de système.
+      \item L'utilisateur doit vérifier le nombre de données retournées\\
+      \item L'utilisateur doit valider les Items selon les types demandées par le client.
+      \item L'utilisateur peut aussi vérifier la quantité d'erreurs dans le Log.
+      \item L'utilisateur peut aussi Vérifier le temps de Crawl avec le Monitoring de la distribution.
+      \item L'utilisateur peut aussi vérifier la quantité de réponses réussies et échouées.
+      \end{enumerate}
+      \vspace{0.7}
+      \end{minipage}\\
+\hline
+post condition & Données validées et supervisées. \\
+\hline 
+\end{tabular}
+\end{table}
+\section{Monitoring des données}
+Dans cette partie nous allons spécifier {\bf\underline{la réalisation du Monitoring des données}}.\\
+Pour cela nous commençons par définir le terme générale de Monitoring:\\
+$\Rightarrow$ \textbf{Le monitoring \cite{monitoring} :} Le monitoring ou la supervision informatique permet d’analyser en temps réel l’état du système informatique et l’état du réseau informatique à des fins préventives. Il permet d’alerter en cas de dysfonctionnement des systèmes d’information et de pouvoir ainsi agir le plus rapidement possible afin d’éviter une indisponibilité des systèmes. \\Le monitoring réseau ou le monitoring de serveurs, plus généralement, trouve écho dans de nombreux aspects des ressources informatiques d’une entreprise qui peut être classé en trois grandes familles fournissant différents niveaux d’informations : 
+\begin{enumerate}
+    \item\textbf{Monitoring ou surveillance réseau :} Ce genre de supervision active va permettre d’analyser la disponibilité d’un équipement matériel à distance connecté sur un réseau informatique. Les technologies utilisées pour ce type de supervision  sont très simples et le niveau des informations retournées est filtré.
+    \item\textbf{Monitoring ou surveillance applicatif :} A l’aide de cette surveillance, on va disposer d’une visibilité sur l’ensemble de l’équipement physique mais également sur les applications qui y sont exécutées et les informations qu’elles renvoient.
+    \item\textbf{Monitoring ou surveillance système :} Situé au cœur du système informatique, il va nous fournir des informations en temps réel sur l’utilisation Microprocesseur, Mémoire, etc….
+\end{enumerate}
+$\Rightarrow$ \textbf{Dans notre cas :} On va se focaliser sur le monitoring(surveillance) des Scrapy Spider pour valider l'exécution et de vérifier les résultats de ces Spiders.
+\subsection{Spidermon}
+Spidermon est un outil de surveillance pour les Scrapy Spider qui nous permet d'écrire des moniteurs qui peuvent valider, tester l'exécution et montrer les résultats de nos Spiders.
+La fonctionnalité de base de Spidermon offre quelques fonctions utiles qui nous permettent de construire vos moniteurs par-dessus. \\
+Si nous souhaitons mettre en place des notifications, des dépendances de surveillance supplémentaires nous aideront à le faire.\\
+Si nous voulons utiliser la validation des schémas, nous voulons probablement une validation.
+
+\subsubsection{Installation}
+La méthode recommandée pour installer la bibliothèque est donc d'ajouter les deux options monitoring et validation:
+\textbf{La figure \ref{fig:Spidermon}} montre la façon d'installer Spidermon.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=12cm, height=1cm]{images/install Spidermon.PNG}
+            \caption{Installation de Spidermon}
+            \label{fig:Spidermon}  
+        \end{figure}
+\subsubsection{Activation de Spidermon}
+Pour activer Spidermon dans notre projet, nous devons inclure les lignes suivantes dans le fichier du projet Scrapy \textbf{settings.py} \textbf{(figure \ref{fig:Activation Spidermon})} :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Enable.PNG}
+            \caption{Activation de Spidermon}
+            \label{fig:Activation Spidermon}  
+        \end{figure}
+\subsubsection{Moniteur}
+Nous avons créer un nouveau fichier appelé \textbf{monitors.py} qui contiendra la définition et la configuration de nos moniteurs.\\
+
+$\Rightarrow$ Notre premier moniteur vérifiera si au moins un nombre donnée au paramètre d'éléments ont été retournés à la fin de l'exécution du spider.\\
+Ce moniteur doit être exécutée lorsque le Spider se ferme, nous l'incluons donc dans la liste \textbf{SPIDERMON\_SPIDER\_CLOSE\_MONITORS} dans le fichier \textbf{settings.py} :
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=11.5cm, height=4cm]{images/Close.PNG}
+            \caption{Activation de la liste SPIDERMON\_SPIDER\_CLOSE\_MONITORS}
+            \label{fig:Activation Spidermon}  
+        \end{figure}
+        
+\vspace{1cm}   
+\newpage
+\noindent Après avoir exécuté de Spider, on doit voir ce qui suit dans la partie Logs :
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm]{images/Monitor.PNG}
+            \caption{Le résultat de notre Monitoring}
+            \label{fig:Logs}  
+        \end{figure}
+\noindent Si l'état de notre moniteur est défaillant, cette information apparaîtra dans le Logs :
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=10cm]{images/failure.PNG}
+            \caption{Le résultat d'un moniteur défaillant}
+            \label{fig:Logs}  
+        \end{figure}
+Les moniteurs sont la classe principale dans laquelle nous incluons notre logique de surveillance. Après les avoir définis, nous devons les inclure dans une \textbf{MonitorSuite}, afin qu'ils puissent être exécutés. Une instance de moniteur possède les propriétés suivantes qui peuvent être utilisées pour nous aider à mettre en place vos moniteurs :
+\begin{itemize}
+    \item\textbf{data.stats}  objet de type dict-like contenant les statistiques de l'exécution de Spider.
+    \item\textbf{data.crawler} instance of actual Crawler object.
+    \item\textbf{data.spider} instance de l'objet Spider réel.
+\end{itemize}
+\subsubsection{Suite de Moniteur}
+Une suite de moniteurs regroupe un ensemble de classes de moniteurs et nous permet de spécifier les actions qui doivent être exécutées à des moments précis de l'exécution de Spider.
+\begin{enumerate}
+    \item\textbf{class MonitorSuite :} Une instance de MonitorSuite définit un ensemble de moniteurs et d'actions à exécuter après que le Spider a terminé son exécution.
+    \begin{itemize}
+        \item \textbf{monitors} liste des moniteurs qui seront exécutés si cette suite est activée.
+        \item \textbf{monitors\_finished\_actions :} liste des classes d'action qui seront exécutées si tous les moniteurs ont réussi.
+        \item \textbf{monitors\_failed\_actions} liste des classes d'action qui seront exécutées si au moins un des moniteurs a échoué
+    \end{itemize}
+    \item \textbf{on\_monitors\_finished(result) :} Exécuté juste après que les contrôleurs ont terminé leur exécution et avant toute autre action.
+    \item \textbf{on\_monitors\_passed(result) :} Exécuté juste après que les moniteurs aient terminé leur exécution mais après que les actions définies dans monitors\_finished\_actions aient été exécutées si tous les moniteurs ont réussi.
+    \item \textbf{on\_monitors\_failed(result) :} Exécuté juste après que les moniteurs aient terminé leur exécution mais après que les actions définies dans monitors\_finished\_actions aient été exécutées si au moins un moniteur a échoué.
+
+\end{enumerate}
+
+\subsubsection{Validation de l'Item}
+Une fonction utile pour surveiller un Spider est de pouvoir valider les articles retournés par rapport à un schéma défini.\\
+Spidermon fournit un mécanisme qui nous permet de définir un schéma d'articles et des règles de validation qui seront exécutées pour chaque article retourné.\\ Pour activer la fonction de validation des items, la première étape consiste à activer le pipeline d'articles intégré dans les paramètres de projet \textbf{(figure \ref{fig:activate})} :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Spider validation.PNG}
+            \caption{Activation de la fonction de validation des items}
+            \label{fig:activate}  
+        \end{figure}
+Ensuite, nous devons choisir la bibliothèque de validation qui sera utilisée. Spidermon accepte les schémas définis à l'aide de Schematics ou de JSON Schema.
+\begin{longtable}[c]{|l|l|}
+\captionsetup{justification=centering}
+    \caption{  \label{tab:UM-ATH} Tableau comparatif entre les Schematics et les JSON Schema}
+    \centering
+	\hline
+	\rowcolor[HTML]{C0C0C0}
+	\textbf{schémas}                      & \textbf{JSON Schema}                                                        
+	
+	\hline
+	\endhead
+	\begin{tabular}[c]{m{18em}}\tabitem Schematics est une bibliothèque de validation basée sur des modèles de type ORM. Ces modèles comprennent certains types de données et validateurs courants, mais ils peuvent également être étendus pour définir des règles de validation personnalisées.\\ \tabitem nous devons installer \textbf{Schematics} pour utiliser cette fonction. \end{tabular}         & \begin{tabular}[c]{m{18em}}\tabitem Le schéma JSON est un outil puissant pour valider la structure des données JSON. nous pouvons définir les champs requis, le type attribué à chaque champ, une expression régulière pour valider le contenu et bien plus encore.\\ \tabitem nous devons installer \textbf{jsonschema} pour utiliser cette fonction\end{tabular}      
+        \\ \hline
+\end{longtable}
+Par la suite, chaque fois que nous lancerons le Spider, nous aurons un nouvel ensemble de statistiques dans le Log de Spider fournissant des informations sur les résultats des validations :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Erreur.PNG}
+            \caption{Des informations sur les résultats des validations}
+            \label{fig:activate}  
+        \end{figure}
+nous avons ensuite créer un nouveau moniteur qui vérifiera ces nouvelles statistiques et signalera un échec lorsque nous avons une erreur de validation d'article et nous avons également paramétrer le pipeline de manière à inclure l'erreur de validation comme un champ dans l'élément :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/item.PNG}
+            \caption{L'erreur de validation comme un champ dans l'Item}
+            \label{fig:activate}  
+        \end{figure}
+\subsubsection{Dossier Rapport}
+Cette action permet de créer un fichier rapport basé sur un modèle. Nous avons utilisé Jinja2 comme moteur de modèle.\\
+
+\textbf{C'est quoi Jinja2 ?}\\
+$\Rightarrow$ Jinja est un langage de création de modèles moderne et convivial pour Python, inspiré des modèles de Django. Il est rapide, largement utilisé et sécurisé.\\ Il permet: \\
+\indent• Un héritage de modèle.\\
+\indent• De compile le code Python optimal juste à temps.\\
+\indent• De faciliter le débogage. Les numéros de ligne des exceptions pointent directement vers la ligne correcte dans le modèle.\\
+Il est auusi:\\
+\indent• puissant système d'échappement HTML automatique pour la prévention XSS.\\
+\indent• syntaxe configurable.
+Dans notre cas, nous avons créer un fichier appelé my\_report.html lorsque la suite de moniteurs se terminera, et pour les paramètres disponibles nous avons fixé:\\
+• \textbf{SPIDERMON\_REPORT\_CONTEXT :} Dictionnaire contenant les variables de contexte à inclure dans notre rapport.\\
+• \textbf{SPIDERMON\_REPORT\_FILENAME :} Chaîne de caractère contenant le chemin du fichier de rapport généré.\\
+• \textbf{SPIDERMON\_REPORT\_TEMPLATE :} Chaîne de caractère contenant l'emplacement du modèle pour le rapport de fichier.
+\noindent La figure \textbf{\ref{fig:jinja}} montre l'implémentions de ces paramètres dans notre solution.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/jinja.PNG}
+            \caption{Paramètre de dossier rapport}
+            \label{fig:jinja}  
+        \end{figure}
+\noindent La figure \textbf{\ref{rapport}} montre un exemple de dossier rapport.
+\begin{figure}[H]
+\includegraphics[width=7cm, height=7cm]{images/Rapport1.PNG}\hfill 
+\includegraphics[width=7cm, height=7cm]{images/Rapport2.PNG} 
+\caption{Exemple de dossier rapport}\label{rapport} 
+\end{figure} 
+\subsection{Que faut-il surveiller ?}
+\noindent Ce sont quelques mesures habituelles utilisées dans les moniteurs :\\
+\indent• la quantité d'Items extraits par le Spider.\\
+\indent• la quantité de réponses réussies reçues par le Spider.\\
+\indent• la quantité de réponses échouées (erreurs côté serveur, erreurs réseau, erreurs de proxy...)\\
+\indent• le temps nécessaire pour terminer le crawl.\\
+\indent• la quantité d'erreurs dans le Log (erreurs de Spider, erreurs génériques détectées par Scrapy...)\\
+\indent• le nombre d'Items présentant des erreurs de validation (champs obligatoires manquants, format incorrect, valeurs ne corresponde pas à une expression régulière spécifique, chaînes de caractères trop longues/courtes, valeurs numériques trop hautes/basses...)
+\section{Monitoring de la distribution}
+Dans cette partie on va spécifier {\bf\underline{la réalisation du Monitoring de la distribution}}.\\
+Pour cela on va utiliser un service spécifique qui est le \textbf{ScrapydWeb}.
+\subsection{ScrapydWeb} 
+C'est une application Web pour la gestion des serveurs Scrapyd, avec prise en charge de l'analyse et de la visualisation des Logs Scrapy.
+\subsubsection{Installation et configuration}
+\noindent L'installation et configuration de ScrapydWeb peut être résumer par ces points:\\
+\indent• Scrapyd doit être installer et démarrer sur tous vos hôtes. Notez que si nous souhaitons \indent visiter notre serveur Scrapyd à distance, nous devons définir manuellement \\\indent\textbf{bind\_address = 0.0.0.0} et redémarrer Scrapyd pour le rendre visible en externe.\\
+\indent• Installer ScrapydWeb via la commande \textbf{pip install scrapydweb}.\\
+\indent• Configurer ScrapydWeb avec le fichier \textbf{default\_settings.py} figures \textbf{\ref{fig:config1}} et \textbf{\ref{fig:config2}}.\\
+\indent• Redémarrer ScrapydWeb via la commande \textbf{ScrapydWeb}.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{images/Config1.PNG}
+    \caption{Activer l'authentification de base HTTP}
+    \label{fig:config1}  
+    \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{images/config2.PNG}
+    \caption{Ajouter les serveurs Scrapyd}
+    \label{fig:config2}  
+    \end{figure}
+    
+\subsubsection{Interface web de l'utilisateur}
+Pour afficher l'UI il faut visiter \textbf{http://127.0.0.1:5000} et connecter\\ avec le NOM D'UTILISATEUR / MOT DE PASSE ci-dessus.\\
+La page Serveur afficherait automatiquement l'état de fonctionnement de tous vos serveurs Scrapyd.\\
+Nous pouvons sélectionner n'importe quel nombre de serveurs Scrapyd en les groupant et en les filtrant.\\
+La figure \textbf{\ref{fig:surveiller}} montre comment on peut surveiller et contrôler tous nos serveurs Scrapyd.\\
+La figure \textbf{\ref{fig:Liste}} affiche la liste des Jobs en attente, en cours et terminés de tous nos projets.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm, height=10.5cm]{images/Monitordis1.PNG}
+    \caption{Surveiller et contrôler tous les serveurs de Scrapyd}
+    \label{fig:surveiller}  
+    \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm, height=10.5cm]{images/Monitordis2.PNG}
+    \caption{La liste des Jobs en attente, en cours et terminés de tous les projets}
+    \label{fig:Liste}  
+    \end{figure}
+\subsubsection{Déploiement des projets}
+Après avoir configuré l'option \textbf{SCRAPY\_PROJECTS\_DIR} sur le chemin contenant vos projets Scrapy, ScrapydWeb répertorie tous les projets de ce répertoire, avec le dernier projet modifié sélectionné. Sélectionnez simplement un projet et appuyez sur le bouton \textbf{Package \& Deploy} pour soumettre.\\
+Nous pouvons sélectionner n'importe quel nombre de vos serveurs Scrapyd pour déployer des projets.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{images/Deploy1.PNG}
+    \caption{Déploiement des projets}
+    \label{fig:config2}  
+    \end{figure}
+\subsubsection{Analyse et visualisation}
+ScrapydWeb pourrait collecter \textbf{Crawler.stats} et \textbf{Crawler.engine} via la console telnet intégrée de Scrapy.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{images/LogAnalyste.PNG}
+    \caption{Analyse des Logs}
+    \label{fig:LogA}  
+    \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm, height=12cm]{images/Virsualisation.PNG}
+    \caption{Visualisation des informations de la distribution}
+    \label{fig:config2}  
+    \end{figure}
+\subsubsection{Minuteur des tâches}
+On peut vérifier les paramètres d'une tâche, ainsi que les résultats de son exécution.
+Soyons libre de mettre en pause, reprendre, déclencher, arrêter, modifier et supprimer une tâche.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm, height=12cm]{images/Timer.PNG}
+    \caption{Minuteur des tâches}
+    \label{fig:config2}  
+    \end{figure}
+\section*{Conclusion}
+Dans ce chapitre nous avons réussi à mettre en place le Monitoring de notre système de bot, ainsi nous pouvons superviser les erreurs et valider les Items. En d’autre partie, le Monitoring permet un suivi complet des données avec des interfaces aussi claires que simples pour garantir la satisfaction de nos client. \\\textbf{Cela nous permet de satisfaire les besoins non fonctionnel de \underline{fiabilité}, \underline{simplicité} et \underline{d'ergonomie}.}

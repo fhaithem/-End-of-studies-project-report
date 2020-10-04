@@ -1,0 +1,162 @@
+\chapter{Phase 1 : Distribution}
+
+\section*{Introduction}
+
+%Jusqu'à ici nous avons parcouru un long chemin. En effet, nous avons étudié les deux axes principaux pour extraire les données en utilisant une appréciation beaucoup plus approfondie des différentes caractéristiques que Scrapy nous fournit par ses paramètres et en étudiant ces performances.
+Rappelons que le système de bot, objet de notre travail, se base sur trois phases, à savoir : la distribution, l'extraction et l'indexation des données et le monitoring. Dans ce chapitre, nous allons présenter la première partie "Distribution". Ainsi, nous allons spécifier toutes les technologies utilisées durant la réalisation de cette phase. 
+
+\section{Conception}
+\subsection{Diagramme de cas d'utilisation raffiné}
+Nous allons commencer par le raffinement de cas d'utilisation "Configurer la distribution du système".
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{images/UseCadeDistrib.PNG}
+\caption{Raffinement de cas d'utilisation "Configurer la distribution du système"}
+\end{figure}
+\subsection{Description textuelle}
+Le tableau \ref{tab:textuelle} montre la description textuelle de cas d'utilisation "Configurer la distribution du système".
+\begin{table}[H]
+      \captionsetup{justification=raggedright,singlelinecheck=false}
+      \centering
+        \caption{Description textuelle du cas d'utilisation "Extraire les données"} 
+		\label{tab:textuelle}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+Acteurs & Utilisateur, Administrateur\\
+\hline
+But &  Réaliser la distribution de notre système de bot\\
+\hline
+Pré condition &  le serveur de Scrapyd déjà lancé  \\
+\hline
+Scénario nominal  & \begin{minipage}{1\linewidth}
+    \vspace{0.7}
+      \begin{enumerate}
+      \item L'utilisateur peut modifier le middleware.
+      \item L'utilisateur doit choisir le nombre de serveurs de distribution.
+      \item L'utilisateur lance le service de Scrapyd client.
+      \item L'utilisateur doit déployer ces serveurs.
+      \item L'utilisateur peut aussi lancer ScrapydWeb pour le Monitoring de la distribution.
+      \end{enumerate}
+      \vspace{0.7}
+      \end{minipage}\\
+\hline
+Post condition & Système distribué. \\
+\hline 
+\end{tabular}
+\end{table}
+\section{Fonctionnement de la distribution}
+Nous allons  donner la manière d'utiliser cette technologie de distribution innovante à l'échelle au-delà d'un seul serveur.\\ Ainsi, nous pouvons facilement exploiter les ressources de plusieurs serveurs.\\ Pour ce faire, nous allons utiliser un middleware Scrapy comme nous le faisons habituellement, mais nous utiliserons également 
+Scrapyd.\\
+Notre système de bot est développé pour être distribué c’est à dire, le Spider qui est responsable de l'extraction de données peut être exécuté sur plusieurs serveurs distants. 
+Dans ce chapitre nous allons détailler le fonctionnement de cette étape. 
+ 
+ \subsection{Scrapyd}
+Scrapyd est un service de gestion des Spider Scrapy.
+Il nous permet de déployer les projets Scrapy et de contrôler leurs spiders en utilisant une API HTTP JSON sur des serveurs distants.
+Jetons d'abord un coup d'œil sur l'interface web de scrapyd à la \textbf{figure \ref{fig:Scrapyd's web interface}} que nous pouvons trouver à \textbf{http://localhost:6800/} 
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=12cm]{images/Scrapyd.PNG}
+            \caption{Interface web de Scrapyd \cite{book}}
+            \label{fig:Scrapyd's web interface}  
+        \end{figure}
+
+Nous devons d'abord déployer le Spider sur le serveur de scrapyd. La première étape est de modifier le fichier de configuration \textbf{scrapy.cfg} comme suit (\textbf{figure \ref{fig:Scrapyd's settings}}) :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Scrapyd-Settings.PNG}
+            \caption{Configuration de scrapy.cfg}
+            \label{fig:Scrapyd's settings}  
+        \end{figure}
+Ensuite, pour déployer le Spider de notre système de bot, nous utilisons le scrapyd-deploy qui est un outil fourni par \textbf{scrapyd-client}. \\Auparavant scrapyd-client faisait partie de Scrapy, mais maintenant c'est un module séparé qui peut être installé avec \textbf{pip install client-scrapyd}  \\
+Le déploiement de Spider se fait par la commande \textbf{scrapyd-deploy}. \\On obtient alors le résultat de \textbf{la figure \ref{fig:déploiement de Spider}}.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=4cm]{images/Scrapyd-deploy.PNG}
+            \caption{Déploiement de Spider}
+            \label{fig:déploiement de Spider}  
+        \end{figure}
+Le déploiement étant réussi, nous pourrons également voir le projet mentionné dans la section Projets disponibles de la page principale de l'interface Web de scrapyd.\\
+Nous pouvons maintenant suivre les instructions sur la même page pour soumettre un Job (\textbf{figure \ref{fig:Soumettre un Job}}):
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=2cm]{images/Curl.PNG}
+            \caption{Soumission d'un Job}
+            \label{fig:Soumettre un Job}  
+        \end{figure}
+\newpage
+\noindent Ainsi, nous pouvons consulter notre spider depuis le serveur de scrapyd (\textbf{figure \ref{fig:consulter})}:
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=7cm]{images/Jobs.PNG}
+            \caption{Consultation du  Spider depuis Scrapyd}
+            \label{fig:consulter}  
+        \end{figure}
+\noindent Génial! Si nous visitons la section \textbf{Logs} comme l'illustre la \textbf{figure \ref{fig:Section Log}}, nous pourrons voir \textbf{les items} que nous venons d'explorer. 
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=12cm]{images/Log.PNG}
+            \caption{Section Log}
+            \label{fig:Section Log}  
+        \end{figure}
+Il est important de spécifier le paramètre \textbf{max\_proc}. scrapyd autorisera jusqu'à quatre fois le nombre de processeurs que les travaux Scrapy exécutent en parallèle. Comme nous allons courir de nombreux serveurs scrapyd, nous avons alors défini ce nombre à quatre.\\
+$\Rightarrow$ \textbf{Ce qui permet quatre Jobs à exécuter en parallèle.}\\
+\textbf{La figure \ref{fig:scrapyd.cfg}} montre la totalité de notre configuration.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Scrapyd-client.PNG}
+            \caption{Configuration de scrapyd.cfg}
+            \label{fig:scrapyd.cfg}  
+        \end{figure}
+\newpage
+\subsection{Vue d'ensemble de notre système distribué}
+Nous utiliserons notre système de bot pour effectuer l'exploration horizontale des pages web et l'extraction de lots d'URL. Nous distribuerons ensuite
+ces lots d'URL vers des nœuds Scrapyd de manière circulaire et les explorer.\\
+\textbf{La figure \ref{fig:vue}} donne un aperçu sur la vue d'ensemble de notre système de bot distribué.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=14cm, height=8cm]{images/overview.PNG}
+            \caption{Vue d'ensemble du système \cite{book}}
+            \label{fig:vue}  
+        \end{figure}
+Scrapy fournit des files d'attente persistantes de scrapyd, qui signifie que les Logs ayant échoué redémarreront dès que le nœud sera de retour.
+\section{Réalisation}
+Afin de construire ce système, nous devons modifier légèrement notre Scrapy Spider et développer un middleware. Plus précisément, nous devrons effectuer les opérations suivantes: \\
+\indent• Ajuster l’analyse de la page web à la vitesse maximale\\
+\indent• Écrire un middleware qui regroupe et envoie des URL aux serveurs Scrapyd\\
+\indent• Utiliser le même middleware pour autoriser l’utilisation des URL par lots au démarrage.
+Nous essaierons de mettre en œuvre ces changements de la manière la plus discrète possible. Idéalement, l'ensemble de l'opération doit être propre, facile et transparent pour satisfaire l'exigence au niveau de l'infrastructure.
+Nous sommes maintenant prêts à développer une infrastructure qui traite les URL détaillées visant à l'exploration verticale, les regroupe et les envoie aux scrapyds au lieu de les explorer localement.
+Si nous vérifions l'architecture de Scrapy (\textbf{figure \ref{fig:Architecture de Scrapy}}) nous pouvons facilement conclure que c'est le travail d'un middleware spider lorsqu'il implémente \textbf{process\_spider\_output ()}, qui traite les requêtes avant qu'elles n'atteignent le downloader et a le pouvoir de les annuler. 
+\subsection{Obtention des URLs de démarrage à partir des paramètres}
+Nous pouvons sentir à quel point le middleware de Spider est bien adapté à nos besoins lorsque nous notons qu'il fournit une méthode \textbf{proces\_start\_requests()}, qui peut être utilisée
+pour traiter les start\_requests que les Spiders nous fournissent. Nous détectons ainsi le paramètre \textbf{DISTRIBUTED\_START\_URLS}, et si tel est le cas, nous utilisons
+ces URL pour générer une requête pertinente. Nous définissons la \textbf{response\_download()} de CrawlSpider comme rappel, et nous définissons la méta ['rule'] afin que leur réponse soit traitée par la règle appropriée.\\
+
+\textbf{La figure \ref{fig:parametre}} montre comment  activer notre middleware et comment définir les paramètres dans notre settings.py :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/ScrapyDistribute.PNG}
+            \caption{Activer le middleware de distribution et définir les paramètres}
+            \label{fig:parametre}  
+        \end{figure}
+
+\subsection{Déploiement des serveurs scrapyd}
+Afin de pouvoir déployer les spiders sur nos trois serveurs scrapyd, nous devons les
+ajouter à notre fichier scrapy.cfg (\textbf{La figure \ref{fig:dep}}).\\
+Chaque section \textbf{[deploy: target-name]} de ce fichier définit une nouvelle cible de déploiement:
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.9]{images/Deployscrapyd.PNG}
+            \caption{Déploiement des serveurs scrapyd}
+            \label{fig:dep}  
+        \end{figure}
+\noindent Nous pouvons aussi interroger les cibles disponibles avec \textbf{scrapyd-deploy -l} (\textbf{la figure \ref{fig:vise})} :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/CaptureScrapyd.PNG}
+            \caption{Viser les serveurs disponibles}
+            \label{fig:vise}  
+        \end{figure}
+\section*{Conclusion}
+Dans ce chapitre nous avons identifié la partie distribution de notre système de bot. Dans une première partie nous avons étudié la conception de cette phase. Ensuite, nous avons expliqué le fonctionnement de la distribution. Après vient la partie de réalisation. Au final nous avons construit une solution distribuée robuste adéquate pour \textbf{satisfaire le besoin non fonctionnel de \underline{rapidité du traitement}}, puisque le fait d'exécuter le Spider sur plusieurs serveurs Scrapyd (4 serveurs dans notre cas) simultanément permet de terminer notre job 4 fois plus rapide que sans solution distribuée. Dans le chapitre suivant nous allons entamer la deuxième partie de notre pipeline à savoir l'extraction et l'indexation de données.

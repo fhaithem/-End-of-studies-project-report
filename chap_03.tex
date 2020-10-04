@@ -1,0 +1,650 @@
+\chapter{Phase 2 : Extraction et indexation de données à large échelle}
+
+%%% %%%%%%%%% %%%
+\section*{Introduction}
+Après la réalisation de la phase de distribution, nous passons à la phase de l’extraction et l'indexation de données.  
+Ce chapitre est divisé en deux axes principaux qui sont la  partie données et la  partie Web.  
+%%%%%%%%%%
+\section{Conception}
+\subsection{Diagramme de cas d'utilisation raffiné}
+Nous allons commencer par le raffinement de cas d'utilisation "Extraire les données" et nous finissons par le raffinement de cas d'utilisation "Indexer les données".
+\begin{figure}[H]
+\centering
+\includegraphics[width=17cm, height=10cm]{images/UseCaseExtract.PNG}
+\caption{Raffinement de cas d'utilisation "Extraire les données"}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=17cm, height=10cm]{images/UseCaseIndex.PNG}
+\caption{Raffinement de cas d'utilisation "Indexer les données"}
+\end{figure}
+\newpage
+\subsection{Description textuelle}
+Nous allons commencer par la description textuelle du cas d’utilisation "Extraire les données" et nous finissons par la description textuelle du cas d’utilisation "Indexer les données".
+\begin{table}[H]
+      \captionsetup{justification=raggedright,singlelinecheck=false}
+      \centering
+      \captionsetup{justification=centering}
+        \caption{Description textuelle du cas d'utilisation "Extraire les données"} 
+			%%\label{tab:tableau}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+Acteurs & Utilisateur, Administrateur\\
+\hline
+But &  Extraire les données depuis un site e-commerce tout en configurant les fonctionnalités de système de bot\\
+\hline
+Pré condition & L'utilisateur connaît déjà le type de données à extraire.\\
+\hline
+Scénario nominal  & \begin{minipage}{1\linewidth}
+    \vspace{0.7}
+      \begin{enumerate}
+      \item L'utilisateur saisie l’url de  site e-commerce et le type de données à extraire ces informations sont données par l’administrateur.
+      \item Dans certain cas l'utilisateur, il peut modifier les Xpath .
+      \item L'utilisateur doit configurer les serveurs:\\
+      • il sélectionne les serveurs d'indexation de données.\\
+      • il sélectionne les serveurs de proxy en cas de besoin.
+      \item Il lance ensuite le système de bot .
+      \end{enumerate}
+      \vspace{0.7}
+      \end{minipage}\\
+\hline
+post condition & Données extraites. \\
+\hline 
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+      \captionsetup{justification=raggedright,singlelinecheck=false}
+      \centering
+      \captionsetup{justification=centering}
+        \caption{Description textuelle du cas d'utilisation "Extraire les données"} 
+			%%\label{tab:tableau}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+Acteurs & Utilisateur, Administrateur\\
+\hline
+But & Indexer les données\\
+\hline
+Pré condition &  Données déjà extraites  \\
+\hline
+Scénario nominal  & \begin{minipage}{1\linewidth}
+    \vspace{0.7}
+      \begin{enumerate}
+      \item L'utilisateur configure Elasticsearch.\\
+      \item L'utilisateur lance le serveur d'indexation.\\
+      \end{enumerate}
+      \vspace{0.7}
+      \end{minipage}\\
+\hline
+post condition & Données indexées dans ElasticSearch. \\
+\hline 
+\end{tabular}
+\end{table}
+\section{Partie Données}
+\begin{itemize}[label=\ding{118},font=\normalsize]
+\addtolength{\itemindent}{0cm}
+\item\bf\underline{Réalisation du bot générique}
+\end{itemize}
+Notre bot générique que nous avons développé va suivre une démarche bien déterminée lors de son fonctionnement.
+En effet, ce bot est développé pour être générique c’est à dire il a le potentiel d’extraire les données de n’importe quelle site quelque soit un site statique ou dynamique.
+%Ce tableau \ref{tab:UM-ATH1} va nous présenter la différence entre un site statique et dynamique.
+\begin{longtable}[c]{|l|l|}
+\captionsetup{justification=centering}
+    \caption{  \label{tab:UM-ATH1} Tableau comparatif entre un site statique et dynamique \cite{diff}}
+    \centering
+	\hline
+	\rowcolor[HTML]{C0C0C0}
+	\textbf{Site statique}                      & \textbf{Site dynamique}                                                        
+	
+	\hline
+	\endhead
+	\begin{tabular}[c]{m{18em}}\tabitem Ces pages peuvent présenter toute forme de contenu, animations flash, images, musique, vidéo etc... mais elles sont toujours présentées de la même façon. Elles ne changent pas et c'est en ce sens qu'elles sont statiques.\\
+	\tabitem \CheckmarkBold  Plus simples à réaliser\\
+	\tabitem \xmark  Vivacité \end{tabular}         & \begin{tabular}[c]{m{18em}}\tabitem Les pages dynamiques permettent de présenter les informations de différentes manières selon l'interaction avec le visiteur.
+        Le contenu est issu d'une base de données en fonction de critères établis par l'internaute puis mis en page en temps réel.
+C'est le cas par exemple d'un site e-commerce: présentation des articles par thèmes, couleurs, prix etc...\\
+\tabitem \CheckmarkBold  Plus simples à réaliser\\
+\tabitem \xmark  Nécessite plus de temps de travail pour la programmation\end{tabular}      
+        \\ \hline
+\end{longtable}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{images/Site Statique.PNG}
+\caption{Site statique \cite{server}}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{images/Site Dynamique.PNG}
+\caption{Site dynamique \cite{server}}
+\end{figure}
+\begin{itemize}[label=\ding{118},font=\normalsize]
+\addtolength{\itemindent}{0cm}
+\item\textbf{Deux cas se présentent:}
+\end{itemize}
+
+\subsection{Cas des sites statiques}
+Nous allons ici détailler le fonctionnement de Scrapy dans le cadre de notre solution.
+Mais tout d’abord pour bien assimiler le fonctionnement il faut comprendre les concepts de bases :
+\subsubsection{Fonctionnement de Scrapy}
+\begin{enumerate}
+\item\textbf{Spiders :} C’est une classe où on définisse le comportement personnalisé pour l'exploration et l'analyse des pages d'un site particulier.
+Maintenant on va expliquer en détail notre Spider:
+    \begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item Spider commence par généré une requête initial pour crawler le premier URL et spécifie une fonction Callback à appeler avec la réponse qui est le HTML téléchargé à partir de la page web.
+        Les premières requêtes sont obtenues en appelant :
+        \begin{itemize}
+            \item La méthode \textbf{start\_requests()} qui (par défaut) génère des requêtes pour les URL spécifiées dans les \textbf{start\_urls}.
+            \item La méthode parse comme callback function pour ces requêtes.
+        \end{itemize}
+        
+       \item Dans \textbf{Callback} function, on  analyse le contenu HTML de la page Web, généralement à l'aide des sélecteurs et on récupère la response pour générer des items avec les données analysées (parsed data).
+        \item\textbf{les items} renvoyés par le spider seront généralement conservés dans une base de données dans notre cas c’est ElasticSearch.
+        
+    \end{itemize}
+    \item\textbf{Selectors :} Lorsque nous faisons du scraping  des pages Web, la tâche la plus courante que nous devons effectuer consiste à extraire les données de la source HTML. Il existe plusieurs bibliothèques disponibles pour y parvenir.\\
+Scrapy arrive avec son propre mécanisme d'extraction de données. Ils sont appelés « sélecteurs » car ils sélectionnent certaines parties du document HTML spécifiées par XPath ou des expressions CSS.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=15cm, height=7cm]{images/Xpath.PNG}
+            \caption{Sélection d'éléments HTML avec XPath \cite{book}}
+             
+        \end{figure}
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{DOM \cite{dom} :} c'est une interface de programmation d'application (API) pour les documents HTML et XML. Il définit la structure logique des documents et la manière dont un document est accessible et manipulé.
+        \begin{figure}[htbp]
+\centering
+\includegraphics[scale=1]{images/DOM.PNG}
+\caption{Représentation de DOM d'un exemple de tableau \cite{domtable}}
+\end{figure}
+        \end{itemize}
+%Ce Tableau \ref{tab:UP-ATH} va nous donner la différence entre Xpath et CSS\\
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{3cm}|p{3cm}|l|p{3cm}|l}
+\centering
+\rowcolor[HTML]{C0C0C0}
+\hline
+\textbf{Caractéristiques} & \textbf{Xpath} & \textbf{CSS}\tabularnewline
+\hline
+Apprentissage &  \centering \xmark & \centering \CheckmarkBold \tabularnewline
+\hline
+Flexibilité &  \centering \CheckmarkBold & \centering \xmark \tabularnewline 
+\hline
+Facilité &  \centering \CheckmarkBold & \centering \xmark \tabularnewline 
+\hline
+Performance &  \centering \CheckmarkBold &  \centering \CheckmarkBold \tabularnewline 
+\hline
+Compatibilité &   \centering \CheckmarkBold  & \centering \CheckmarkBold \tabularnewline 
+\hline
+Naviguer dans le  DOM  &   \centering \CheckmarkBold  & \centering \xmark \tabularnewline  
+\hline
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Tableau comparatif entre Xpath et CSS }
+\label{tab:UP-ATH}
+\end{table}
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=14cm, height=7cm]{images/get.PNG}
+            \caption{Extraire XPath avec Google Chrome \cite{book}}
+             
+        \end{figure}
+    \item\textbf{Items :} L'objectif principal du scraping est d'extraire des données structurées à partir de sources non structurées, généralement des pages Web. Les Spider peuvent renvoyer les données extraites sous forme d'éléments, des objets Python qui définissent des paires clé-valeur.
+    Scrapy prend en charge les types de Items suivants: dictionnaires, Item objects, dataclass objects, and attributes objects.
+    \begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item Dans notre cas on utilise \textbf{Item objects} qui fournit un dictionnaire semblable à une API, ainsi que des fonctionnalités supplémentaires qui en font le type d'Item le plus complet.
+\end{itemize}
+\item\textbf{Item Pipeline :} Une fois que l’Item a été récupéré par notre classe Spider, il est envoyé à l’Item Pipeline qui le traite via plusieurs composants qui sont exécutés séquentiellement.
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{process\_item(self, item, spider) :} Cette méthode est appelée pour chaque composant de l’Item Pipeline.
+        \item\textbf{open\_spider(self, spider) :} Cette méthode est appelée lorsque le Spider est ouvert.
+        \item\textbf{close\_spider(self, spider) :} Cette méthode est appelée lorsque le Spider est fermé.
+        \item\textbf{from\_crawler(cls, crawler) :} Si elle est présente, cette méthode de classe est appelée pour créer une instance de pipeline à partir d'un Crawler. Elle doit renvoyer une nouvelle instance du pipeline. L'objet Crawler donne accès à tous les composants de base de Scrapy comme les paramètres et les signaux : c'est un moyen pour le pipeline d'y accéder et d'accrocher sa fonctionnalité dans Scrapy.
+        \end{itemize}
+\item\textbf{Downloader Middleware :} C'est un système léger et de bas niveau pour modifier globalement les demandes et les réponses de Scrapy.
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{Spider middleware :} Traiter les requêtes /réponses qui sont envoyées aux spiders pour générer des items.
+        \end{itemize} 
+\item\textbf{Settings :} Settings Scrapy nous permettent de personnaliser le comportement de tous les composants Scrapy, y compris les API, les extensions, les pipelines et les Spiders.\\
+\end{enumerate}
+$\Rightarrow$ \textbf{Nous pouvons résumer tout le processus par :}
+\begin{enumerate}
+    \item Définir les urls initiaux
+    \item Réaliser le Parsing des pages
+    \item Extraire les données
+    \item Extraire les urls à suivre
+    \item Traiter les données
+    \item Passer à l'itération suivante...
+\end{enumerate}
+\textbf{La figure \ref{fig:Architecture de Scrapy}} va nous permettre d’assimiler tous les composants de Scrapy.
+
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=9cm]{images/scrapy_archi.PNG}
+            \caption{Architecture de Scrapy \cite{architect}}
+            \label{fig:Architecture de Scrapy}  
+        \end{figure}
+
+\subsubsection{User Agent}
+C'est une chaîne qu'un navigateur ou une application envoie à chaque site web que nous visitons. Le User Agent typique contient des détails tels que le type d'application, le système d'exploitation, le fournisseur de logiciels. Les serveurs web utilisent ces données pour évaluer les capacités de notre ordinateur, en optimisant les performances et l'affichage d'une page.\\
+
+\noindent Dans \textbf{la figure \ref{fig:User Agent1}}, nous présentons un exemple de notre propre user agent.
+
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=4cm]{images/USERAGENT.PNG}
+            \caption{Exemple de User Agent}
+            \label{fig:User Agent1}  
+        \end{figure}
+La plupart des sites web bloquent les requêtes qui arrivent avec un Utilisateur-Agent invalide.\\
+$\Rightarrow$ \textbf{Dans notre cas :} On réalise un grand nombre de requêtes  pour le web scraping d’un site web, il est bon de procéder à une randomisation. Nous pouvons faire en sorte que chaque requête  envoyée semble aléatoire, en modifiant l'adresse IP de sortie de la requête à l'aide d’un Proxy rotatifs et en envoyant un ensemble différent d'en-têtes HTTP pour faire croire que la requête provient d'ordinateurs différents et de navigateurs différents.
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{Pour faire la rotation de User Agent avec Scrapy : }\\ Il existe quelques middlewares Scrapy qui nous permettent de faire pivoter des agents utilisateurs comme :
+        \begin{enumerate}
+            \item\textbf{Scrapy-UserAgents} 
+            \item\textbf{Scrapy-Fake-Useragents}   
+        \end{enumerate}
+        \vspace{1cm}
+        $\Rightarrow$ Notre projet est basé sur \textbf{Scrapy-UserAgents}.\\ Tout d’abord if faut installer Scrapy-UserAgents  avec la commande de console :\\\textbf{pip install scrapy-useragents}, Ensuite ajouter dans Settings.py les middlewares.
+        \end{itemize}
+        \vspace{1cm}
+\textbf{La figure \ref{fig:User Agent}} illustre l’implémentation de Scrapy-UserAgents dans notre projet Scrapy.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/rotation UserAgent.PNG}
+            \caption{Rotation d'User Agent}
+            \label{fig:User Agent}  
+        \end{figure}
+\subsubsection{Proxy} Un serveur proxy \textbf{\cite{proxy}} dans le cadre des réseaux informatiques et d'internet, est une machine qui fait l'intermédiaire entre notre matériel (ordinateur, smartphone, tablette...) et internet.
+
+Le but de son utilisation c'est l'affichage de l'adresse IP du proxy et non celle du périphérique utilisé, ce qui permet de surfer anonymement (ou presque) sur le web.
+\newpage
+\begin{itemize}[label=\ding{118},font=\normalsize]
+    \addtolength{\itemindent}{0cm}
+    \item\textbf{Pour faire la rotation de Proxy avec Scrapy : }\\  
+On a utilisé \textbf{Scrapy-Rotated-Proxy} c'est un Scrapy middleware permettant d'attacher dynamiquement un proxy à une requête, qui peut utiliser de manière répétée des proxys tournants fournis par la configuration. Il peut bloquer temporairement une adresse IP de Proxy non disponible et la récupérer pour l'utiliser à l'avenir lorsque le Proxy sera disponible. Il peut également supprimer un proxy invalide. La liste des adresses IP des Proxy peut être fournie via Spider Settings, File ou MongoDB.
+Dans notre cas on fournit la liste des IP Proxy directement dans Spider Settings.
+Tout d’abord if faut installer Scrapy-Rotated-Proxy avec la commande de console :\\ \textbf{pip install scrapy-rotated-proxy}, ensuite ajouter dans Settings.py les middlewares.\\
+\textbf{La figure \ref{fig:rotateProxy}} Illustre l’implémentation de Scrapy-Rotated-Proxy dans notre projet Scrapy.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/proxy.PNG}
+            \caption{Rotation de Proxy}
+            \label{fig:rotateProxy}  
+        \end{figure}
+        \end{itemize}
+On voit ici que l'utilisateur peut modifier:\\
+L'adressage des données avec les sélecteurs Xpath\\
+Les user agent
+Les proxys
+Les serveurs d'indexation
+
+\subsubsection{Extraction des URLs}
+Une page web typique aura des liens vers de nombreuses pages de liste et un système de pagination qui nous permet de passer d'une page à l'autre.
+En conséquence, notre système de bot se déplace dans deux directions:\\
+•  \textbf{Horizontalement:} d'une page web à une autre.\\
+• \textbf{Verticalement:} d'une page web aux pages de liste pour extraire les items.\\
+Tout ce dont nous avons besoin, c'est de récuperer le  XPath de la page suivante, et de callback notre méthode parse.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=13cm]{images/direction.PNG}
+            \caption{Les mouvements de notre système de bot \cite{book}}
+            \label{fig:Exemple}  
+        \end{figure}        
+\subsubsection{Indexation des données :} Nous avons déjà bien présenté ElasticSearch dans la partie analyse préliminaire.
+Dans cette partie on va détailler \textbf{Scrapy-ElasticSearch :}\\ C’est un Scrapy pipeline qui permet d'envoyer directement Scrapy Items à ElasticSearch.\\
+Tout d’abord if faut installer Scrapy-ElasticSearch avec la commande de console :\\ \textbf{pip install Scrapy-ElasticSearch}, ensuite ajouter dans Settings.py les middlewares.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.9]{images/ESpipeline.PNG}
+            \caption{Indexation des données avec Scrapy-ElasticSearch \cite{itempipeline}}
+            \label{fig:Proxy}  
+        \end{figure}
+Les figures \textbf{\ref{fig:ES}} et \textbf{\ref{fig:Spider ES}} Illustrent l’implémentation de Scrapy-ElasticSearch dans notre projet Scrapy.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.9]{images/ES.PNG}
+            \caption{Implémentation Scrapy ElasticSearch dans Settings.py}
+            \label{fig:ES}  
+        \end{figure}
+        
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Spider ES.PNG}
+            \caption{Implémentation Scrapy ElasticSearch dans Spider.py}
+            \label{fig:Spider ES}  
+        \end{figure}
+
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{API REST de ElasticSearch}
+l'indexation et la recherche de contenu dans ElasticSearch se font à l'aide d'une API REST, nous allons apprendre à exploiter cette API.\\
+\textbf{La figure \ref{fig:REST}} résume le fonctionnement de REST API.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/API REST.PNG}
+            \caption{Fonctionnement d'un service RESTful \cite{RestApi}}
+            \label{fig:REST}  
+        \end{figure}
+Le développement des API consiste simplement à intégrer les méthodes(verbes) HTTP, Pour bien comprendre ces méthodes on va faire l'analogie avec les CLAUSE SQL.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=4cm]{images/HTTP.PNG}
+            \caption{Analogie entre les verbes du protocole HTTP et les clauses SQL \cite{RestApi}}
+            \label{fig:table}  
+        \end{figure}
+        Ce qui nous reste maintenant est d'exploiter simplement l'API par laquelle il expose ses fonctionnalités. On utilise Le JSON comme format d'échange de données et L'URI de l'index a la forme suivante. (\textbf{La figure \ref{fig:URI}})
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/URI ES.PNG}
+            \caption{L'URI de l'index \cite{RestApi}}
+            \label{fig:URI}  
+        \end{figure}
+Voila un exemple \textbf{figure \ref{fig:Exemple1}} de création d'index testé avec Postman
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=15cm]{images/PUT API.png}
+            \caption{Création d'index}
+            \label{fig:Exemple1}  
+        \end{figure}
+        \end{itemize}
+On voit ici que nos clients peuvent accéder au données stocker dans ES à travers des API simple et toujours disponible.\\
+\textbf{$\Rightarrow$ Cela permet de satisfaire les besoins non fonctionnel de \underline{disponibilité} et \underline{simplicité}.}
+
+\subsection{Cas des sites dynamiques}
+Dans le cas des sites dynamiques, on va utiliser toutes les technologies d'extraction des données pour les sites statiques, Mais dans ce cas le processus nécessite l'ajout d'un outil d'une part pour exécuter du JavaScript avec python et d'autre part pour éviter d’être bloquer.
+Dans cette partie, on va détailler le fonctionnement de notre sustème de bot pour extraire les datas des sites dynamiques.  
+\subsubsection{Selenuim}
+Nous avons bien présenté Selenuim dans l’étape de l’analyse préliminaire, dans cette partie nous allons détailler son fonctionnement et son implémentation dans notre projet. 
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{Les étapes de fonctionnement :} \\
+La première étape consiste à utiliser \textbf{Selenium Web Driver} pour écrire les tests fonctionnels. Ensuite, nous devons envoyer une requête au serveur Selenium pour exécuter les scénarios de test sur différents navigateurs. Dans notre cas on utilise \textbf{Headless Chrome} Comme Headless Browser.\\
+\textbf{La figure \ref{fig:fonctionnement}} détaille le fonctionnement de Selenuim.
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm]{images/WebDriver.PNG}
+            \caption{Les étapes de fonctionnement de Selenuim \cite{EtapeSelenuim}}
+            \label{fig:fonctionnement}  
+        \end{figure}
+        \item\textbf{Localisation des éléments Web à l’aide de Selenium Web Driver :} \\
+        Selenium Web Driver utilise des localisateurs pour interagir avec les éléments de la page Web, En effet, Un localisateur est un attribut HTML d'un élément Web constitue l'adresse qui identifie de manière unique un certain élément dans une page Web. Il est utilisé pour indiquer à Selenium quelle opération doit être effectuée. \\
+        Ainsi, nous avons différents types de localisateurs pour identifier les éléments web avec précision, à savoir:
+        \begin{itemize}
+            \item Identifiant
+            \item Nom
+            \item linkText
+            \item CSS
+            \item Class
+            \item partial\_link\_Text
+            \item XPath
+        \end{itemize}
+        \item\textbf{Méthode de travail :} \\
+        Dans notre cas le but est d’exécuter du JavaScript en même temps récupérer la response du page web, dans le but d’extraire les données d’un certain site dynamique développé par JavaScript.
+        Pour résoudre ce problème nous avons développé des solutions:
+        \begin{enumerate}
+            \item\textbf{Classe SelenuimJS :} Comporte des méthodes pour l’exécution et l’automatisation de JavaScript : 
+            
+            • \textbf{scroll\_until\_loaded(driver) :} Cette méthode statique permet de « Scroller » jusqu’à l’arrivé à un élément spécifique qu’on définisse ou jusqu’à l’arrivé à la fin de la page.
+            
+            • \textbf{close\_last\_tab(driver) :} Cette méthode statique qui permet de fermer l'onglet  actif et de retourner vers l'onglet précèdent.
+            
+            • \textbf{open\_new\_tab(driver, elem) :} Cette méthode statique permet d’ouvrir et de passer à ce nouvel onglet, Cette ouverture se fait avec l’url passé en paramètre de la fonction. 
+            
+            • \textbf{ScreenShot(driver, name) :} Cette methode permet de prendre des screenshot et de les enregistrer. Ces derniers nous permet de suivre l’avancement de l’exécution de JavaScript.
+            
+            • \textbf{getattr(driver, path) :} Cette méthode permet de de récupérer des éléments selon leurs Xpath.\\
+            
+            \item\textbf{Méthodes de Spider :}\\
+            
+            • \textbf{\_\_init\_\_(self, name=None, **kwargs) :} C'est le constructeur de la classe de Spider qui permet d’initialiser les paramètres de notre driver, définir l'User Agent avec \textbf{FakeUserAgent} et le Proxy est défini par \textbf{Tor Browser}.\\
+            
+            • \textbf{get\_selenium\_response(self, driver, url)} Cette méthode est primordiale pour le fonctionnement de ce système de bot, En effet, elle prend en paramètre l’url de site choisi et le driver déjà initialisé pour chaque requête elle retourne tout le HTML de la page traité par Selenuim Web driver. Ce qui nous permet d’utiliser cette nouvelle réponse dans la méthode \textbf{parse} de Scrapy.\\
+            
+            • \textbf{Les fonctions génériques :} Sont celle qui rendent notre bot générique:
+             \begin{enumerate}
+             \item\textbf{supDoublons(l) :} Permet de supprimer les doublons d’une liste fournis en paramètre, cette méthode est utile lorsque on a duplication des URL
+             \item\textbf{recup\_href(l) :} Permet de retourner une liste des URL 
+             \item\textbf{convert\_float(item) :} Permet de convertir un item en float. Cette méthode est utile dans le cas des prix puisque il est préférable qu’elle soit des nombre non des chaînes de caractère 
+             \item\textbf{replace(elem) :} Cette méthode est très importante puisque elle permet de supprimer des caractères non désiré. Pour avoir des datas propre à indexer.\\
+             \end{enumerate}
+            
+        
+    \end{enumerate}
+    \end{itemize}
+    
+    \subsubsection{L'art de ne pas se faire bloquer }
+    Dans cette partie on va étudier les différentes solutions disponibles pour éviter d'être bloquer.\\
+    \textbf{La figure \ref{fig:BanH}} montre un exemple de ce genre de problème.
+        
+    \begin{figure}[H]
+            \centering
+            \includegraphics[width=12cm, height=10.5cm]{images/Ban_Hermes.png}
+            \caption{Exemple de site qui nous a bloqué}
+            \label{fig:BanH}  
+        \end{figure}
+    On va énumérer les solutions utilisées pour éviter d’être bloquer:
+     \begin{itemize}[label=\ding{118},font=\normalsize]
+            \addtolength{\itemindent}{0cm}
+            \item\textbf{Délai entre deux requêtes :} Lorsqu'un visiteur humain accède à une page web, la vitesse est modérée par rapport à ce qui se passe dans Web Scraping. En effet lors de l’extraction de données d’une manière rapide, cette vitesse crée un énorme trafic sur le site.
+            Ce dernier soupçonne que nous ne somme pas des utilisateurs humains. Il nous bloquera donc aussi naturellement.\\
+            $\Rightarrow$ \textbf{Solution :} Il faut être un peu modéré avec le site lors de l’extraction des données pour éviter le blocage.\\ 
+            Essayer de mettre des délais aléatoires entre les requêtes, afin de donner l’impression qu'un utilisateur humain accède au site.
+            \item\textbf{Utiliser des Proxy Servers :} Lorsque le site observe qu'il y a un certain nombre de requêtes, il devient suspect et finit par bloquer l'adresse IP.\\
+            $\Rightarrow$ \textbf{Solution :} Tout ce que nous devons faire, c'est éviter de scraper les données d'un seul IP. Il faut utiliser plusieurs IP et services proxy de manière aléatoire, afin de faire croire au site que la requête est générée par différents serveurs. Il devient de plus en plus difficile pour le site de détecter que nous somme un scraper ou un crawler. Il existe différentes méthodes pour modifier notre IP.\\
+            \textbf{La figure \ref{fig:ip}} montre ma propre adresses ip.
+            
+            \begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=5cm]{images/Mon IP.PNG}
+            \caption{Ma propre adresse IP}
+            \label{fig:ip}  
+        \end{figure}
+        $\Rightarrow$ \textbf{Dans notre cas :} On utilise TOP Browser pour changer notre IP à chaque fois,\\ \noindent\textbf{la figure \ref{fig:Ban}} montre la nouvelle adresse définie par Tor Browser
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=16cm, height=8cm]{images/TOR Browser.png}
+            \caption{Changer l'IP avec TOR Browser}
+            \label{fig:Ban}  
+        \end{figure}
+        \item\textbf{L’extraction de données en utilisant une logique différente :} Les mécanismes anti-Scraping d'un site peuvent facilement détecter une approche prévisible et le propriétaire du site peut nous bloquer.\\
+        $\Rightarrow$ \textbf{Solution :} Nous devons inclure quelques clics aléatoires sur différentes pages.\\ Le mouvement aléatoire de la souris, conforme à celui d'un utilisateur humain, peut également donner l'impression qu'un visiteur humain accède au site.
+        \item\textbf{Utiliser l'User Agent différemment :}\\ $\Rightarrow$ \textbf{Solution :} La meilleure solution pour éviter le blocage est l'User Agent rotatif.
+Pour créer une liste de User Agent et l'utiliser de manière aléatoire pour chaque demande et nous ressemblons à un véritable utilisateur.
+
+        \item\textbf{Gardez un œil sur les outils d'Anti Scraping :}\\ $\Rightarrow$ \textbf{Solution :} Il est nécessaire de prendre un moment pour étudier les mécanismes ANTI-SCRAPING qu'un site a mis en place et d'élaborer notre stratégie et notre outil de scraping en conséquence. 
+        \end{itemize}
+\section{Performance de Scrapy}    
+Tout d'abord voyons le modèle de performance de Scrapy en détail (\textbf{voir figure \ref{fig:perfermence}})
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.85]{images/perfermance.PNG}
+            \caption{Modèle de performance de Scrapy \cite{book}}
+            \label{fig:perfermence}  
+        \end{figure}
+On va présenter deux éléments de ce modèle de performance, les autres éléments sont déjà expliquer dans la partie fonctionnement de Scrapy.\\
+
+\begin{enumerate}
+    \item\textbf{The scheduler :} C'est là que plusieurs requêtes sont mises en file d'attente jusqu'à ce que le Downloader est prêt à les traiter. Ils se composent principalement de simples URLs.\\
+    
+    \item\textbf{The throttler :} Il s'agit d'une mesure de sécurité, si la taille agrégée de la réponse en cours est supérieure à 5 MB, il arrête le flux de la demande supplémentaire dans le Downloader.
+\end{enumerate}
+
+Nous attendons à ce que le débit de notre système dépend du temps moyen nécessaire pour télécharger une page, qui dépend de temps de latence système.\\
+{\centering
+ \mathversion{bold}\large \[t_{download} = t_{response} + t_{overhead}\]\par
+}
+Il est également bon de prendre en compte un certain temps de démarrage et d'arrêt. Cela comprend le décalage entre le moment où nous obtenons un response et l'heure de sortie de ses éléments à l'autre bout de notre pipeline.
+
+$\Rightarrow$ \textbf{Dans l'ensemble}, si nous devons effectuer un travail de N requests et que notre Spider est correctement réglé, nous devrions pouvoir le compléter en:\\
+
+\begin{equation}
+    \centering\mathversion{bold}{\large t_{job} = \[\frac{N.(t_{response} + t_{overhead})}{CONCURRENT\_REQUESTS} + t_{start/stop}\]}
+\end{equation}
+\textbf{La figure \ref{fig:resultat1}} montre les résultats expérimentaux qui concerne les requêtes\\ concurrentes.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/resultat.PNG}
+            \caption{Modèle de performance de Scrapy et les résultats expérimentaux \cite{book}}
+            \label{fig:resultat1}  
+        \end{figure}
+\noindent\textbf{$\Rightarrow$ Cela nous permet de satisfaire le besoin non fonctionnel de \underline{performance}.}       
+\section{Partie Web}
+Dans cette partie, nous avons intégré toutes la partie données dans une application Web moderne à l’aide de Django REST Framework et React. En utilisant ces deux framework, nous pourrons bénéficier des dernières avancées en matière de développement JavaScript et front-end. \\
+Les tâches les plus importante est :\\
+
+\textbf{Comment utiliser Scrapy avec cette application Django ?}\\
+
+\textbf{Comment connecter l'application React avec l'application Django ?}\\
+
+\noindent Pour répondre à ces question on va tout d'abord étudier l'architecture de Django.
+%\subsection{Architecture Django}
+\subsection{Introduction aux ORM}
+Il s'agit d'un programme informatique situé entre la couche de stockage de données et la couche application dans une base de données relationnelle. Il permet l'abstraction et la représentation des données sous forme d'objets. Par conséquent, lors de la conception d'applications, nos informations seront stockées sous forme d'objets informatiques, et l'ORM sera responsable de la correspondance avec la base de données \textbf{\cite{orm}}.
+\subsection{Architecture MVT}
+\noindent Django utilise l'architecture MVT (modèle de vue modèle) inspirée de MVC:\\
+
+• \textbf{Le modèle} interagit avec la base de données via ORM. Tous les modèles sont collectés dans le fichier python models.py.\\
+
+• \textbf{La vue} reçoit la requête HTTP et renvoie la réponse HTTP appropriée (par exemple, si la requête est une interaction avec la base de données, la vue appelle le modèle pour récupérer l'élément demandé). Les vues se trouvent dans le fichier views.py.\\
+
+• \textbf{Le template} est le fichier HTML récupéré par la vue et envoyé au visiteur avec les données du modèle.\\
+
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=11cm]{images/Django Archi.PNG}
+            \caption{Schéma de l'architecture MVT \cite{djangoarchi}}
+            \label{fig:resultat}  
+        \end{figure}
+\newpage
+\noindent Cette \textbf{figure \ref{fig:Comp}} montre la comparaison entre l'architecture MVC et MVT.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Comparison.PNG}
+            \caption{Comparaison entre l'architecture MVC et MVT \cite{mvcmvt}}
+            \label{fig:Comp}  
+        \end{figure}
+\subsection{Avantages de l'architecture MVT de Django}
+Django est basé sur cette architecture et il communique réellement entre ces trois composants sans avoir besoin d'écrire un code complexe. C'est pourquoi Django est populaire.\\
+Cette architecture à Django présente divers avantages comme :\\
+
+\begin{enumerate}
+    \item \textbf{Développement rapide :} Cette architecture Django qui se sépare en différents composants  permet à plusieurs développeurs de travailler simultanément sur différents aspects d'une même application.
+    \item \textbf{Couplé de manière souple :} L'architecture de Django comporte différents composants qui se requièrent mutuellement à certains endroits de l'application, à chaque instant, ce qui augmente la sécurité de l'ensemble du site web. Comme le fichier modèle ne sera désormais enregistré que sur notre serveur plutôt que sur la page web.
+    \item \textbf{Facilité de modification :} S'il y a un changement dans les différents composants, nous n'avons pas à le changer dans d'autres composants.\\
+\end{enumerate}
+ 
+
+Nous avons couvert le modèle MVT de l'architecture de Django et expliqué en détail les composants : Modèle, Vue et Contrôleur. Nous avons également appris certains avantages de l'architecture Django. Maintenant il est temps de répondre aux questions posé à l'introduction.
+\section{Réalisation}
+\subsection{Intégration de la partie données dans l'application Django}
+Dans cette partie nous allons détailler l'intégration de notre projet Scrapy (partie données) dans un projet Django (partie web).
+\subsubsection{Fonctionnement de l'application}\\
+\noindent\textbf{(1)} L'utilisateur envoie une demande avec une URL pour l'explorer. \\
+\textbf{(2)} Django déclenche Scrapy pour qu'il lance un Spider afin d'explorer cette URL. \\
+\textbf{(3)} Django retourne une réponse pour dire à son utilisateur que le crawling vient de commencer.\\ 
+\textbf{(4)} Scrapy complète le crawling et enregistre les données extraites dans une base de données. \\
+\textbf{(5)} Django récupère ces données dans la base de données et les renvoie à l'utilisateur. 
+\vspace{0.5cm}
+
+Django ne savent pas quand Scrapy finit de Scraper. Il existe une méthode de rappel appelée \textbf{pipeline\_closed}, mais elle appartient au projet Scrapy. On ne peut pas renvoyer une réponse de Scrapy pipelines. Nous n'utilisons cette méthode que pour sauvegarder les données extraites dans une base de données.\\
+Pour informer l'utilisateur de l'application que Scrapy a fini de Scrapper deux solutions se présentent:\\
+\indent• Nous pouvons soit utiliser des sockets web pour informer le client lorsque le crawling est terminé.\\
+\indent• Nous pouvons commencer à envoyer des requêtes toutes les 2 secondes (plus ou moins) pour vérifier l'état de l'exploration après avoir obtenu la réponse "crawling commencé".\\
+
+\textbf{$\Rightarrow$ Dans notre cas :} La solution Web Socket semble plus stable et plus robuste. Mais elle nécessite un second service fonctionnant séparément et implique une configuration plus importante. Je vais ignorer cette option pour le moment. Mais je choisirais les web sockets pour mes applications de niveau production.
+Il est préférable de Consulter ce diagramme \textbf{(figure \ref{fig:fonctDjango})} pour assimiler l'approche de travail :
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.8]{images/Scrapy_Django.PNG}
+            \caption{Fonctionnement de l'application \cite{fonction}}
+            \label{fig:fonctDjango}  
+        \end{figure}
+\subsubsection{Connexion entre Scrapy et Django}
+Pour avoir accès aux modèles Django de Scrapy, nous devons les relier entre eux. Nous allons configurer le fichier settings.py de Scrapy \textbf{(figure \ref{fig:Djangointe})}
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/Django integration.PNG}
+            \caption{Connexion entre Scrapy et Django}
+            \label{fig:Djangointe}  
+        \end{figure}
+
+Si nous voulons rendre une méthode ou une propriété dynamique, nous devons la définir sous la méthode \textbf{\_\_init\_\_}, afin de pouvoir passer les arguments de Django et les utiliser ici. Nous devons également créer un Item pipeline pour notre projet Scrapy et l'activer \textbf{(figure \ref{fig:Djangopip})}.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/DjangoPipeline.PNG}
+            \caption{Activation de Pipeline}
+            \label{fig:Djangopip}  
+        \end{figure}
+
+\noindent\textbf{$\Rightarrow$ Nous avons obtenu alors un projet Scrapy intégré dans une application Django qui:}\\
+
+\indent•  Permet de crawler un site web (vient de Django view)\\
+\indent•  Permet d'extraire tous les Items sélectionnés  du site web\\
+\indent• Permet de les inscrire sur une liste\\
+\indent• Permet d'enregistrer la liste sur les modèles Django.
+\subsection{Connexion entre React et Django}
+Dans cette partie on parle du partie Front-end, que j'ai construit avec React.\\
+Dans un premier temps, nous devons initialiser notre React App, on obtient aprés l'éxécution de la commande \textbf{npm start} cette ette interface (\textbf{figure \ref{fig:npm1}}) que nous pouvons trouver à \textbf{http://localhost:3000/}.
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/npm.PNG}
+            \caption{Welcome to React}
+            \label{fig:npm1}  
+        \end{figure}
+\newpage
+\noindent\textbf{Pour Connecter l'application l'application React avec l'application Django :}\\
+\indent• Créer la production de l'application React: \textbf{npm run build}\\
+\indent• Éditer Package.json: \textbf{"proxy": "http://localhost:8000"}\\
+\indent• Éditer app/urls.py: \textbf{path("react", views.react, name="react")}\\
+\indent• Éditer app/views.py: \textbf{def react(request)}\\
+\indent• Éditer djangoReact/settings.py: \textbf{La figure \ref{fig:connect}}
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=1]{images/SettingsReact.PNG}
+            \caption{Connecter React to Django}
+            \label{fig:connect}  
+        \end{figure}
+\subsection{Création de l’interface React}
+Dans cette partie, nous allons créer l’application frontale de notre projet à l’aide de React qui propose deux façons de gérer les champs de formulaire: l'une est une méthode contrôlée, qui est la plus couramment utilisée; l'autre est une méthode non contrôlée, qui est peu courante.\\
+\noindent\textbf{$\Rightarrow$ le choix se résume à savoir si nos inputs ont besoin d'avoir un contrôle de validations, nous avons opté alors pour un formulaire React avec \textbf{composants contrôlés}}.\\
+En effet, nous voulons souvent contrôler le plus tôt possible la validité de la valeur saisie dans les champs  : des formats incorrects, empêcher des adresses e-mail invalides, etc. Il faut pouvoir alors intervenir au fil de la frappe.\\
+Ainsi, nous avons décidé d'ajouter de la validation sur les champ, nous pouvons le faire avec une fonction de mise à jour de l'état (\textbf{onChange}).\\
+Cependant, ce concept montre toute la puissance de React. En fait, le statut du formulaire ne dépendra que de notre statut, nous n'aurons donc plus à nous soucier de la mise à jour du formulaire, mais uniquement du statut.
+\begin{figure}[h]
+    \begin{minipage}[c]{.45\linewidth}
+        \centering
+        \includegraphics[width=8cm]{images/invalide1.PNG}
+        \caption{fonctionnalité de validation en cas de champs vide}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.45\linewidth}
+        \centering
+        \includegraphics[width=8cm]{images/Invalide2.PNG}
+        \caption{fonctionnalité de validation pour les urls}
+    \end{minipage}
+\end{figure}
+
+
+\newpage
+\noindent Pour lancer l'application React avec le serveur de  Django on utilise la commande:\\\textbf{python manage.py runserver} et on obtient cette interface que nous pouvons trouver à \textbf{http://127.0.0.1:8000/api/crawl/}
+\begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.9]{images/interface.PNG}
+            \caption{Interface de notre application}
+            \label{fig:npm}  
+        \end{figure}
+
+
+
+\section*{Conclusion}
+\normalsize Dans ce chapitre, nous avons présenté  une grande partie de notre système de bot qui est l’extraction et l'indexation de données et nous avons détaillé Les techniques nécessaires pour assurer cette tâche.Nous avons, en plus, réussi à établir une interface simple et compréhensible pour que l'utilisateur puisse saisir l'url. \\
+\noindent\textbf{$\Rightarrow$ Cela montre que nous avons satisfait les besoin non fonctionnel de \underline{simplicité} et \underline{d'ergonomie}.}\\
+Dans le chapitre suivant nous allons entamer la partie de Monitoring.

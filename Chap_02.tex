@@ -1,0 +1,347 @@
+% !TeX spellcheck = fr_FR
+\chapter{Analyse préliminaire}
+
+\section*{Introduction}
+Dans ce chapitre, nous ferons référence aux objectifs de notre projet. Cela nous permet de déterminer les possibilités du système et les besoins des utilisateurs que nous essayerons de projeter dans le diagramme de cas d'utilisation global.
+    
+\section{Spécification des besoins}
+Dans cette partie du rapport, nous présenterons les différents acteurs du système, les besoins fonctionnels ainsi que les besoins non fonctionnels.
+\subsection{Identification des acteurs }
+Les acteurs représentent les personnes ou les composants logiciels ou matériels qui interagissent directement avec le système.\\
+Dans notre projet, il y a 3 acteurs principaux qui manipulent notre système bot comme l'indique \textbf{la figure \ref{fig:actors1}} et qui sont :
+\begin{itemize}
+	\item Client
+	\item Utilisateur 
+	\item Administrateur
+\end{itemize}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.85]{images/Les acteurs.PNG}
+	\caption{Acteurs du système envisagé}
+	\label{fig:actors1}
+\end{figure}
+\indent Chaque acteur accède à des fonctionnalités bien déterminées et ce comme l'illustre le tableau suivant :
+\begin{longtable}[c]{|l|l|}
+\captionsetup{justification=centering}
+    \caption{  \label{tab:UC-ATH5} Tableau des tâches de chaque acteur du système envisagé}
+    %\ref{tab:my-table}
+	\hline
+	\rowcolor[HTML]{C0C0C0}
+	Acteurs                      & Tâches                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                \\ \hline
+	\endhead
+	%
+	Client                        & \begin{tabular}[c]{m{30em}}\tabitem •	Déterminer les données à récupérer\\
+	\tabitem •	 Consulter les données fournies par DATAVORA pour savoir en temps réel quels produits vendent les concurrents, à quel prix, à quelle heure et dans quelle zone.\end{tabular}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             \\ \hline
+	Utilisateur   & \begin{tabular}[c]{m{30em}}\tabitem
+	•	Configurer la distribution de système \\
+	•	Configurer les fonctionnalités du système de bot\\
+	•	Extraire les données\\
+	•	Superviser le Monitoring\\
+	•	indexer les données \\
+	
+	\end{tabular}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                \\ \hline
+	Administrateur & \begin{tabular}[c]{m{30em}}\tabitem •	Assurer la supervision de système de bot \\
+	•	Installer des nouveaux serveurs d'indexation et de proxy\\
+	•	Récupérer les informations depuis les clients à propos les données à extraire \end{tabular}                                          \\ \hline
+	
+\end{longtable}
+
+\subsection{Besoins fonctionnels}
+Notre système de bot doit fournir un ensemble de fonctionnalités qui répondent aux exigences des acteurs. Les principales exigences fonctionnelles sont :
+\subsubsection{Besoins fonctionnels du Client}
+Dans notre système de bot, le client peut :
+\newpage
+\noindent•	\textbf{Déterminer les données à récupérer :} Le client doit spécifier les données à récupérer Exemple: prix, marque d'un produit...\\ 
+•	\textbf{Consulter les données :} Le client doit consulter les données récupérées par notre système de bot.
+\subsubsection{Besoins fonctionnels de l'utilisateur }
+Dans notre système de bot, l'utilisateur peut :\\
+•	\textbf{Configurer la distribution de système :} L'utilisateur doit configurer  toutes les tâches qui concernent la distribution de système de bot pour assurer les besoins exiger.\\
+•	\textbf{Configurer les fonctionnalités du système de bot :} L'utilisateur peut Configurer les fonctionnalités du système de bot tel que les urls, Xpath, Proxy... \\
+•	\textbf{Extraire les données :} L'utilisateur doit évidemment assurer l'extraction des données spécifiques demandées par l'administrateur.\\
+•	\textbf{Superviser le Monitoring :} L'utilisateur doit corriger les erreurs et valider les Items obtenus après le Monitoring.\\
+•	\textbf{Indexer les données :} L'utilisateur doit déterminer les serveurs où il veut indexer les données à l'aide de Elasticsearch.\\
+\subsubsection{Besoins fonctionnels de l'administrateur }
+Dans notre système de bot, l'administrateur peut :\\
+•	\textbf{Assurer la supervision de système de bot :} L'administrateur peut aussi superviser le système de bot avec l'utilisateur \\
+•	\textbf{Installer des nouveaux serveurs d’indexation et de proxy :} L'administrateur installe et configure les serveurs d'indexations et de proxy.\\
+•	\textbf{Récupérer les informations depuis les clients  :} L'administrateur doit être à l'écoute de ces clients pour comprendre leurs besoins et les types de données qu'ils veulent récupérer. 
+\newpage
+\subsection{Besoins non fonctionnels}
+Outre des besoins fonctionnels, le futur système de bot doit également répondre aux contraintes suivantes :\\
+	\indent•	\textbf{La rapidité de traitement :} Compte tenu du grand nombre de données extraites en continu à partir des sites e-commerce et de marchés électroniques.\\
+	
+	•	\textbf{La performance :} Les performances spécifient le temps nécessaire au système pour récupérer et indexer les données. Le terme fait référence à la vitesse à laquelle le système effectue la récupération et l'indexation de données.\\
+	
+	•	\textbf{La disponibilité :} Le système de bot devrait être opérationnel d'une façon continue. Les données doivent être en permanence à la disposition des clients puisque ils peuvent les récupérer à tout moment. .\\
+	
+	•	\textbf{L'ergonomie et la simplicité :} Les interfaces web doivent être faciles et compréhensibles pour que l'utilisateur soit à l’aise lors de l’utilisation du système de bot pour récupérer les données.\\
+	
+	•	\textbf{La fiabilité :} Notre système de bot doit récupérer des données spécifiques et validées demandées par nos clients à fin d’éviter les éventuels problèmes.
+	
+\section{Conception de la solution}
+\subsection{Diagramme de cas d’utilisation global}
+\textbf{La figure \ref{fig:usecasediagram-global}} représente le diagramme de cas d’utilisation général.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.65]{images/UseCaseGenerale.PNG}
+	\caption{Diagramme de cas d'utilisation général}
+	\label{fig:usecasediagram-global}
+\end{figure}
+\subsection{Structure et découpage du projet}
+\textbf{La figure \ref{fig:pipeline}} représente un diagramme de pipeline des phases qui explique toutes les parties de notre projet. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=17.3cm, height=6.2cm]{images/Diagramme pipeline.PNG}
+	\caption{Pipeline des phases de la solution}
+	\label{fig:pipeline}
+\end{figure}
+\section{Spécification de l'environnement de travail}
+%\section[Environnement de travail]{Environnement de travail}
+Dans cette partie, nous allons présenter l’environnement de travail nécessaire à la réalisation des tâches de notre projet.
+
+
+\subsection[Environnement matériel]{Environnement matériel}
+Lors de la réalisation de notre projet, nous avons à utiliser un seul ordinateur dont les configurations sont les suivants :
+\begin{itemize}
+	\item \textbf{PC} : LENOVO Y5070
+	\item \textbf{Processeur} : Intel Core i7-4720HQ
+	\item \textbf{RAM} : 16 Go
+	\item \textbf{Disque dur} : 1To
+	\item \textbf{Système d’exploitation} : Windows 8.1 unilingue
+\end{itemize} 
+À propos des serveurs, nous avons utilisé:
+\begin{itemize}
+    \item \textbf{Processeur} : Xeon E5-2601 8 Core 2.63GHz
+    \item \textbf{RAM} : 128 Go
+\end{itemize}
+
+\subsection{Environnement logiciel }
+
+Dans cette section, nous décrivons l'environnement logiciel ainsi que les technologies utilisés durant toutes les étapes de réalisation du projet.
+\subsubsection{Outils }
+\begin{enumerate}
+%    \item \textbf{Overleaf \cite{overleaf}}: c’est un éditeur Latex en ligne, le moyen le plus simple et le plus efficace de rédiger et modifier des documents. Cette solution est le choix idéal car elle permet de partager des documents Latex entre plusieurs personnes et d’avoir le code source du document ou le télécharger sous format PDF. Nous avons rédigé ce présent rapport en utilisant cet outil.
+    \item \textbf{Star UML (Version 3.1.0) \cite{staruml}}: c’est un logiciel de modélisation UML (Unified Modeling Language) open-source utilisé pour créer des diagrammes de modélisation pour représenter le logiciel à développer.
+    Nous avons utilisé cet outil pour décrire les différents diagrammes de ce rapport.
+    \item \textbf{PostMan (Version 7.28.0) \cite{postman}}: c’est un logiciel créé par Google, permet de gérer les interactions avec les Web API. Cet outil nous a permis de construire et de tester des requêtes HTTP.
+    
+    \item\textbf{Slack \cite{slack}}: Slack est une plateforme de messagerie basée sur des canaux. Slack permet aux gens de collaborer plus efficacement, de connecter l’ensemble de leurs outils et services logiciels, et de trouver les informations dont ils ont besoin pour travailler au mieux, le tout dans un environnement sécurisé de niveau professionnel.
+    
+    \item\textbf{Trello \cite{trello}}: Trello est un outil de gestion de projet en ligne, lancé en septembre 2011 et inspiré par la méthode Kanban de Toyota. Il repose sur une organisation des projets en planches listant des cartes, chacune représentant des tâches. Les cartes sont assignables à des utilisateurs et sont mobiles d'une planche à l'autre, traduisant leur avancement.
+ 
+     
+\end{enumerate}
+%\newpage
+
+\subsubsection{Environnement de développement }
+
+\begin{enumerate}
+
+\item \textbf{PyCharm (version 2019.3.3) \cite{pycharm}}: 
+Utilisé Pour le développement de la partie backend de notre projet.
+
+PyCharm est un environnement de développement intégré utilisé pour programmer en Python. Il permet l'analyse de code et contient un débogueur graphique. Il permet également la gestion des tests unitaires, l'intégration de logiciel de gestion de versions, et supporte le développement web avec Django.
+
+Développé par l'entreprise tchèque JetBrains, c'est un logiciel multi-plateforme qui fonctionne sous Windows, Mac OS X et Linux. Il est décliné en édition professionnelle, diffusé sous licence propriétaire, et en édition communautaire diffusé sous licence Apache.
+
+\item \textbf{WebStorm (version 2019.2.4) \cite{webstorm}}: 
+WebStorm est un IDE pour les langages Web (HTML, CSS et JavaScript), développé par l'entreprise JetBrains et basé sur la plateforme IntelliJ IDEA.\\
+L'éditeur offre divers fonctionnalités:
+\begin{itemize}
+    \item Éditeur, débogueur et permet aussi les tests unitaires de JavaScript
+    \item Prise en charge des langages HTML5, CSS3
+    \item Prise en charge de Node.js et de TypeScript
+    \item Détecteur de code dupliqué
+    \item Intégration des gestions de versions de Git
+\end{itemize}
+\end{enumerate}
+
+\begin{comment}
+\subsubsection{Serveur : IIS (Internet Information Services)}
+C’est le serveur flexible de Microsoft qui s’exécute sous Windows. Pour notre application on a utilisé le serveur IIS
+qui est un service Windows permet d'héberger et de gérer des sites Web sur des systèmes Windows.
+\end{comment}
+
+\subsubsection{Base de données }
+\textbf{Elasticsearch (version 7.6.2) \cite{elasticsearch}: }Elasticsearch est une base de données NoSQL dont la particularité est de pouvoir indexer des documents fortement orientés textes. On pourrait le comparer à un moteur de recherche, mais que nous pourrions paramétrer pour qu’il colle exactement à les besoins de recherche. Elasticsearch, c’est donc un moteur de recherche capable de stocker une grande quantité de documents et que l’on peut interroger en temps réel. Réputé pour ses API REST simples, sa nature distribuée, sa vitesse et sa scalabilité, Elasticsearch est le composant principal de la Suite Elastic, un ensemble d'outils en open source d'ingestion de données, d'enrichissement, de stockage, d'analyse et de visualisation.
+\begin{itemize}[label=\ding{118},font=\normalsize]
+        \addtolength{\itemindent}{0cm}
+        \item\textbf{Les concepts clés d'ElasticSearch}\\
+        Pour comprendre le fonctionnement de l'indexation de contenu et de la recherche dans ElasticSearch, nous devons comprendre tous les concepts clés de son implémentation et les relations entre ces concepts.
+        \begin{enumerate}
+            \item\textbf{Le nœud :} C'est une instance d'exécution du ElasticSearch
+            \item\textbf{Le cluster :} C'est un ensemble d'un ou plusieurs nœuds.
+            \item\textbf{L'index :} C'est le container logique de l'ensemble des indices. l'index désigne l'ensemble des documents JSON stockés sur le disque. \\
+            \noindent Ce tableau va nous aider à comprendre l'organisation des données dans ElasticSearch
+            \begin{figure}[H]
+            \centering
+            \includegraphics[width=17cm, height=4cm]{images/ES vs SGBDR.PNG}
+            \caption{Organisation des données dans ElasticSearch \cite{RestApi}}
+            \label{fig:Spider ES}  %%%%%%%%% tableau ou figure
+        \end{figure}
+        \item\textbf{L'indice :}  c'est le container logique des types (Mapping)
+        \item\textbf{Le Mapping :} C'est un ensemble de documents qui partagent un ensemble de champs communs.
+        \end{enumerate}
+        \end{itemize}
+
+\subsubsection{	Framework et librairies }
+Le choix des frameworks et des bibliothèques est l'étape la plus critique dans le développement du projet. Nous avons donc choisi:
+\begin{enumerate}
+    \item \textbf{Python (version 3.7.6) \cite{python} : }
+Python est un langage de programmation puissant et facile à apprendre. Il dispose de structures de données de haut niveau et permet une approche simple mais efficace de la programmation orientée objet. Parce que sa syntaxe est élégante, que son typage est dynamique et qu'il est interprété, Python est un langage idéal pour l'écriture de scripts et le développement rapide d'applications dans de nombreux domaines et sur la plupart des plateformes.\\
+3 raisons de se mettre à Python \textbf{\cite{pythoncarac}}:
+        \begin{enumerate}
+            \item\textbf{Simple :}
+                \begin{itemize}
+                    \item\textbf{Une syntaxe archi-simple :} Pas besoin de te prendre la tête avec les parenthèses, accolades, crochets, points-virgules, etc…
+                    \item\textbf{Les types sont dynamiques :} Tu n’as pas à écrire le type de tes variables.
+                    \item\textbf{Il ressemble à du langage parlé} 
+                \end{itemize}
+            \item\textbf{Multi fonction :}
+                \begin{itemize}
+                    \item\textbf{Développement Web :} Python est beaucoup utilisé dans le Web. Il y a même des frameworks très évolués et très populaires comme Django pour bien structurer ton travail en Python.
+                    \item\textbf{Data Science : }C’est le langage le plus populaire dans le Big Data.
+                    \item\textbf{Script :} On pourra utiliser Python pour faire du Web Scrapping.
+                \end{itemize}
+            \item\textbf{Populaire :}
+                \begin{itemize}
+                    \item Python est le langage qui a la plus grosse croissance ces dernières années et c’est prévu de continuer comme ça dans les années à venir.
+                \end{itemize}
+        \end{enumerate}
+
+\item \textbf{Django (version 3.0.3) \cite{django} :}
+Django est un framework python open-source consacré au développement web 2.0 . Il est donc clairement orienté pour les développeurs ayant comme besoin de produire un projet solide rapidement et sans surprise. Comme il est toujours compliqué de partir de rien, Django nous propose une base de projet solide. Django est donc une belle boîte à outils qui aide et oriente le développeur dans la construction de ses projets.
+Django s'inspire du modèle MVT (models / view / template)
+
+\item \textbf{Scrapy (version 2.0.0) \cite{scrapy} :}
+Scrapy est un framework open-source permettant la création de robots d'indexation. Développé en Python, il dispose d'une forte communauté, offrant de nombreux modules supplémentaires.
+L'équipe responsable du développement du framework lui confère plusieurs caractéristiques :
+\begin{enumerate}
+\item \textbf{Simple :} aucune notion avancée en Python n'est nécessaire pour utiliser Scrapy.
+\item \textbf{Productif :} l'empreinte de code à générer est très courte, la plupart des opérations sont gérées par Scrapy.
+\item \textbf{Rapide :} le framework est rapide, avec une gestion d'actions en parallèle notamment.
+\item \textbf{Extensible :} chaque robot peut être personnalisés via des extensions, modifiant son comportement
+\item \textbf{Portable :} les robots Scrapy sont compatibles Linux, Windows, Mac et BSD.
+\item \textbf{Open Source}
+\item \textbf{Robuste :} Grâce à une batterie de tests effectuées aussi bien par les développeurs que la communauté.
+\end{enumerate}
+
+\textbf{BeautifulSoup (version 2.0.0) \cite{beautifulsoup} :} La bibliothèque python BeautifulSoup permet d’extraire desinformations d’un site web, ou encore d’un document XML.\\
+Le tableau 2.2 présente les principales différences entre ces deux technologies :
+
+\begin{table}[H]
+\centering
+\begin{tabular}[h]{|l|p{3cm}|p{3cm}|l|p{3cm}|l}
+
+
+\hline
+\textbf{Caractéristiques} & \textbf{Scrapy} & \textbf{BeautifulSoup}\tabularnewline
+\hline
+Apprentissage &  \centering \xmark & \centering \CheckmarkBold \tabularnewline
+\hline
+Ecosysteme &  \centering \CheckmarkBold & \centering \xmark \tabularnewline 
+\hline
+Extensibilité &  \centering \CheckmarkBold & \centering \xmark \tabularnewline 
+\hline
+Performance &  \centering \CheckmarkBold &  \centering \xmark \tabularnewline 
+\hline
+Version stable &   \centering \CheckmarkBold  & \centering \CheckmarkBold \tabularnewline 
+\hline
+
+
+
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Tableau comparatif entre Scrapy et BeautifulSoup }
+\label{label-chap4 tab1}
+\end{table}
+
+\textbf{$\Rightarrow$ Justification du choix Scrapy :} Comme le montre le tableau \ref{label-chap4 tab1}, Scrapy répond bien à nos besoins car il peut garantir des hautes performances, il est extensible et distribué .
+\item \textbf{ReactJs (Version 16.13.1) :}
+React est une bibliothèque JavaScript permettant de créer des interfaces utilisateur rapides et interactives. Elle a été développée par Facebook en 2013 et est actuellement la bibliothèque JavaScript la plus populaire pour la création d'interfaces utilisateur. De plus, il permet de développer avec Javascript ou Typescript.
+
+\textbf{$\Rightarrow$ Justification du choix ReactJs :}
+Dans cette partie, nous avons évoqué les principales différences entre les deux technologies web ReactJS et Angular.
+
+\begin{itemize}[label=\ding{118},font=\normalsize]
+\addtolength{\itemindent}{0cm}
+\item\textbf{Angular} est un framework open source basé sur TypeScript développé par Google et qui permet la création des applications Web.
+\end{itemize}
+%%\newpage
+%\noindent Le tableau \ref{label-chap4 tab2} montre la comparaison entre ReactJs et Angular :
+ 
+
+\begin{table}[H]
+\centering
+\begin{tabular}[h]{|l|p{3cm}|p{3cm}|l|p{3cm}|l}
+
+
+\hline
+\textbf{Caractéristiques} & \textbf{Angular}& \textbf{ReactJS} \tabularnewline
+\hline
+Type&  Framework & Librairie JavaScript \tabularnewline
+\hline
+Utilisation du DOM &  DOM du navigateur& Virtuel DOM\tabularnewline 
+\hline
+Langage &  TypeScript& JavaScript/ TypeScript \tabularnewline 
+\hline
+Data Binding &  Bidirectionnel &  Unidirectionnel \tabularnewline 
+\hline
+Support des plateformes mobiles &   Hybride  & Natif \tabularnewline 
+\hline
+
+\end{tabular}
+\captionsetup{justification=centering}
+\caption{Tableau comparatif entre ReactJs et Angular}
+\label{label-chap4 tab2}
+\end{table}
+Comme le montre \textbf{le tableau \ref{label-chap4 tab2}}, chaque technologie a ses propres avantages et ses inconvénients. Notre choix est fixé sur ReactJs car il est simple et facile à utiliser, grâce à sa flexibilité et son API qui permettent une utilisation facile des composants. Il est à noter également que ReactJS peut être utilisé avec le DOM virtuel pour améliorer les performances et la vitesse.
+
+\item \textbf{Selenium  (Version 3.141) \cite{selenuim} : } C'est un framework de test informatique développé en Java. Il permet donc d'écrire, de manière plus ou moins assistée, des scripts dont l'exécution réalisera automatiquement des actions dans un navigateur web : visiter une page, cliquer sur un lien, remplir un formulaire, et de récupérer les résultats de ces actions.
+\begin{figure}[tbph]
+	\centering
+	\includegraphics[width=17cm\columnwidth,height=9cm\columnwidth]{images/Selenuim.PNG}
+	\caption[L'outil Selenuim]{L'outil Selenuim \cite{outilselenuim}}
+	\label{fig:actors}
+\end{figure}
+\begin{enumerate}
+    \item	\textbf{Webdriver \cite{webdriver} :} C’est un framework de tests fonctionnels issu du projet Selenium, célèbre outil d'automatisation de tests pour navigateurs. Il nous permet d'exécuter les tests dans des navigateurs du marché, distants ou en local.La réponse est simple.
+    On Peut citer comme exemple:
+    \begin{itemize}
+        \item\textbf{Chromedriver :} créé et maintenu par Google qui a également créé le navigateur Chrome.
+        \item\textbf{Geckodriver :}  créé et maintenu par Mozilla qui a également créé le navigateur Firefox.
+    \end{itemize}
+    \textbf{$\Rightarrow$ Justification du choix Chromedriver :}
+Les deux Drivers sont optimisés pour bien fonctionner avec leurs navigateurs correspondants et sont très stables.Mais dans certain cas, le comportement du geckodriver est imprévisible et les tests qui fonctionnent normalement commencent à échouer. En plus Chromedriver et plus rapide que Geckodriver.
+
+
+    \item	\textbf{Headless Browser (Chrome Headless) \cite{headlessbrowser} :} C'est un navigateur web sans interface graphique. Il permet:\\
+    \begin{itemize}
+        \item Automatiser des tests sur des applications web.
+        \item Effectuer des captures d'écrans sur des pages web.
+        \item Lancer des tests automatisés pour des bibliothèques JavaScript.
+        \item Faire du Web scraping pour récupérer des données.
+        \item Automatiser des interactions avec un site web.
+    \end{itemize}
+
+
+
+    \item	\textbf{TOR Browser \cite{torbrowser} :} C’est le programme utilisé pour accéder à internet via le réseau TOR qui est un réseau multi-proxy qui ne s’appuie pas sur des serveurs spécifiques pour traiter les données, mais utilise les connexions de plusieurs autres utilisateurs TOR afin de masquer l’adresse IP originale.En effet il existe plus de 3 millions d’utilisateurs partageant leurs adresses IP dans le monde entier, ce qui rend pratiquement impossible l’identification exacte d’une requête.
+\end{enumerate}
+\item	\textbf{Scrapyd :} Scrapyd est une application pour déployer et exécuter des Spider Scrapy. Il nous permet de déployer (télécharger) les projets et de contrôler leurs spiders à l'aide d'une API JSON.
+\item \textbf{ScrapydWeb :} Application Web pour la gestion des clusters Scrapyd, avec prise en charge de l'analyse et de la visualisation des Logs Scrapy.
+\item	\textbf{Spidermon \cite{spidermon} :} Spidermon est une extension pour les Spider Scrapy. Elle fournit des outils utiles pour la validation des données, le contrôle des statistiques et les messages de notification. De cette façon, nous laissons la tâche de surveillance à Spidermon et nous n'avons qu'à vérifier les rapports/notifications.
+
+
+
+\end{enumerate}
+\subsubsection{Technologies utilisées }
+\begin{enumerate}
+\item 	\textbf{REST API \cite{rest} :} C’est une architecture logicielle qui permet la création des services web et la communication entre les systèmes via le protocole HTTP. L’utilisation de REST API nous permet d’obtenir des applications de meilleure qualité ou encore facilement portable et extensible. De plus, l’architecture REST est facile et simple à implémenter.
+\end{enumerate}
+
+
+
+
+\section*{Conclusion}
+Dans ce chapitre, nous avons présenté une étude préliminaire de notre projet. Nous avons ainsi identifié les acteurs, les besoins fonctionnels et non fonctionnels. Par la suite, nous avons spécifié l’environnement de travail de ce projet. Dans le chapitre suivant nous allons entamer la première partie de notre pipeline à savoir la distribution.

@@ -1,0 +1,230 @@
+\chapter{Cadre général du projet}
+\section*{Introduction}
+Dans ce chapitre, nous allons présenter le cadre général du projet. Tout d’abord, nous présentons l’organisme d’accueil DATAVORA. Puis, nous passons à la description du contexte de notre travail. Ensuite, nous expliquons la méthodologie du travail que nous avons adopté.
+
+% Une section
+
+% Exemple d'une section qui porte une référence à une bibliographie
+% NB: il faut bien suivre le syntaxe pour ne pas tomber dans le cas où il y a une référence dans la table des matières.
+\section {Organisme d’accueil DATAVORA}
+\subsection{Présentation}
+Co-fondée en juin 2016 \cite{datavora}, DATAVORA fournit des données collectées chaque jour sur les marchés électroniques pour booster la croissance des activités d'e-commerce en offrant une veille électronique d'e-commerce pour les acteurs B2C. \\
+DATAVORA explore des centaines de sites Web et de marchés électroniques et analyse l'approvisionnement du marché via de nouvelles données extraites en continu.
+En effet, la startup rassemble des informations telles que l'assortiment de produits, les prix et les spécifications de dizaines de milliers de références disponibles en ligne pour fournir des références et des données compétitives aux fournisseurs de commerce électronique.\\
+Chaque jour, elle scrute des centaines de sites e-commerce et permet ainsi à ses clients de savoir en temps réel quels produits vendent leurs concurrents, à quel prix, à quelle heure et dans quelle zone.
+Trois ans après sa création, la start-up tunisienne, basée à Tunis, a levé plus de 2,2 millions de dinars (761 000 euros). Elle permet à ses clients d’ajuster leurs offres à la concurrence sur le web.
+  
+
+% On peut ajouter une figure en utilisant le syntaxe suivant:
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\columnwidth]{images/DATAVORA INFO.PNG}
+\caption{Informations générales à propos DATAVORA \cite{datavora}}
+\label{fig:Mod-Enseig}
+\end{figure}
+\subsection{Services}
+
+DATAVORA met à la disposition de sa clientèle différents services :
+
+\begin{itemize}[font=\normalsize]
+
+\item Plateforme puissante : Tableaux de bord intuitifs et flexibles  (suivi des prix, assortiments et structure de prix, distributeurs de grandes marques et exposition des marques). 
+ 
+\item Rafraîchissement exceptionnel sur une gamme et une portée uniques.
+
+\item Suivi de prix efficace et un aperçu complet du marché.
+
+\item Portée de données personnalisée, extensible à la demande.
+
+\item Technologie révolutionnaire : Intégration transparente via l'accès à l'API RESTful.
+
+\item Technologie perturbatrice, solide, évolutive et fiable.
+
+\item Un grand volume et une vitesse d'exploration et d'extraction exceptionnelle.
+
+\item Intelligence artificielle de classe mondiale qui simplifie le travail : précision, structuration des données, appariement de produits, etc.
+\end{itemize}
+
+
+
+\section{Présentation du projet }
+\subsection{Cadre du projet}
+Notre stage a été réalisé dans le cadre du projet de fin d’études en vue d’obtenir le diplôme d’ingénieur en génie informatique à l’École Nationale d’Ingénieurs de Carthage (ENICarthage). Le travail que nous a été confié est la distribution et le monitoring d’une extraction des données à large échelle.
+
+En effet, l'e-commerce connaît un véritable essor en Tunisie et à l'étranger, notamment avec la mise en place du Ministère de la Technologie et de l'Economie Numérique, qui a pour objectif d'organiser ce domaine. Les achats à distance permettent aux Tunisiens de profiter d'un énorme marché où ils se trouvent, économisant ainsi du temps de trajet. Les vendeurs peuvent également gagner de l'argent en vendant des biens, des services ou des produits en ligne et ils bénéficieront des données clients et des informations collectées en ligne.
+
+Consciente de l’évolution de ce domaine en Tunisie et à l'étranger, elle cherche à avoir un bot efficace qui permet d'inspecter les sites marchants.
+
+\subsection{Étude et critique de l’existant}
+L'étude de l'existant est considérée comme une étape importante et elle doit être lancée pour appréhender les besoin exactes de la solution envisagée.
+%avant la phase de conception. 
+%L’objectif est d’étudier des solutions existantes similaires à notre projet afin de les évaluer et de proposer des solutions plus complètes pour corriger les faiblesses de ce dernier.\\
+En effet, DATAVORA dispose déjà d’un bot de crawl fonctionnel mais ce dernier n'est pas distribué. En plus, d'une part, il commence à dater puisqu'il est basé sur Scrapy 0.9 et Ubuntu 16.04 et d'autre part, il est de plus en plus blacklisté. C'est pour ce fait qu'elle  a décidé de mettre en place une solution distribuée qui explore des centaines de sites e-commerce et analyse l'approvisionnement du marché via de nouvelles données extraites en continu et en temps réel.
+
+\subsection{Solution et objectifs }
+Dans son ensemble, la solution objet de notre projet doit permettre d'extraire les données à partir des centaines de sites e-commerce ainsi les clients peuvent savoir en temps réel quels produits vendent leurs concurrents, à quel prix, à quelle heure et dans quelle zone.
+
+De son côté, cette solution doit disposer d’une interface web, qui permet de sélectionner l'URL de site e-commerce à scraper.
+L'extraction de données se fait d'une façon distribuée sur plusieurs serveurs afin de gagner plus de temps d'exécution.  Ensuite, vient la phase de Monitoring et l'indexation des données.
+\\
+Les principales fonctionnalités que notre solution doit assurer sont :
+\begin{itemize}[font=\normalsize]
+%\item Une interface web élégante.
+\item Un système d'extraction de données distribuée, fluide et rapide.
+\item Un moteur de recherche flexible et performant.
+\item Un outil de Monitoring pour surveiller et mesurer notre activité.
+\end{itemize}
+
+Ce cahier de charges doit être respecté tout en proposant une interface web élégante.
+\section{Contexte et concepts de base}
+Pour bien réussir notre projet, il était fondamental de bien comprendre les concepts clés de Big Data et l’e-commerce et de faire une étude sur les bots d'indexation (dits de  \textbf{crawl} en anglais) qui existent déjà sur le marché et ce dans le but de retrouver la solution qui correspond le mieux avec nos besoins.
+
+\subsection{Big Data} 
+Le Big Data \textbf{\cite{bigdata}} représente une grande quantité d’ensembles de données qui est collectée et stockée pour être analysée afin que les entreprises et les organisations puissent les utiliser pour prendre de meilleures décisions et améliorer leurs affaires.\\ 
+Les entreprises comme  DATAVORA se concentrent pour l’instant essentiellement sur les données clients. Le Big Data est donc florissant dans les applications B2C (Business to Consumer) qui offre un potentiel immense et devenu indispensable aujourd'hui. Les volumes de données explosent de jour en jour. Que ce soit les systèmes des points de vente traditionnels ou les sites web de commerce électronique, la quantité de données récoltée est exponentielle. Il en est de même sur internet où les réseaux sociaux augmentent leur base de données en temps réel et n’ont pourtant que des capacités d’analyse limitées.\\
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{images/BIG DATA.png}
+\caption{Intervenants du Big Data \cite{bigdata1}}
+\label{fig:Mod-Enseig}
+\end{figure}
+Le Big Data peut être résumé par les 3v:
+\vspace{0.5cm}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{images/les 3v.png}
+\caption{Les 3v du Big Data \cite{3v}}
+\label{fig:Mod-Enseig}
+\end{figure}
+
+\subsection{E-commerce }
+l'E-commerce \textbf{\cite{e-commerce}} est l’échange pécuniaire de biens, de services et d’informations par l’intermédiaire des réseaux informatiques, notamment Internet. 
+En d’autres termes, il s’agit d’un commerce qui gère les paiements grâce à des moyens électroniques. 
+%\vspace{0.4cm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth,height=0.8\columnwidth]{images/Produit.PNG}
+    \caption{Produits et services achetés sur Internet \cite{produit}}
+    \label{fig:Global}  
+    \end{figure}
+\subsubsection{Types d’e-commerce}
+Selon l'échange d'informations, le commerce électronique peut être divisé en plusieurs catégories: B2B (entreprise à entreprise), B2E (entreprise à employé), B2C (entreprise à consommateur), C2C (consommateur à consommateur), B2G (entreprise à gouvernement), G2C (gouvernement au consommateur), etc.
+
+\vspace{1cm}
+\textbf{- Le B2B : Business To Business \cite{B2B} :}
+ Le B2B, prononcé "B two B", désigne les activités commerciales et marketing réalisées entre entreprises. On parle également de commerce inter-entreprises.
+L'activité B2B représente la plus grande partie des échanges commerciaux mondiaux et nationaux.
+\vspace{1cm}
+
+\textbf{- Le B2C : Business To Consumer \cite{B2C} :}
+ Le B2C désigne l'ensemble des relations qui unissent les entreprises et les consommateurs finaux il qualifie les relations de professionnels vers des consommateurs finaux. Par exemple, la relation qui unie un fournisseur d'énergie aux consommateurs d'énergie est une relation B to C.
+
+ \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{images/B2C.png}
+    \caption{Chiffres d'affaires d'E-commerce B2C en Europe de 2012 à 2018 (en milliard d'euros) \cite{stat}}
+    \label{fig:Global}  
+    \end{figure}
+ \vspace{1cm}
+ 
+ \textbf{- Le C2C : Consumer To Consumer \cite{C2C} :} 
+ Le C2C est l'ensemble des échanges de biens et de services effectués directement entre deux ou plusieurs consommateurs. Cette forme d’e-commerce a une grande part dans le développement de l’économie moderne.
+  \vspace{0.5cm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\columnwidth]{img/Untitled.png}
+    \caption{Différents types d'E-commerce}
+    \label{fig:Global}  
+    \end{figure}
+\vspace{0.5cm}
+Dans notre cas, DATAVORA collecte chaque jour des données sur les marchés électroniques pour booster la croissance des activités d'E-commerce pour les acteurs B2C.
+
+\begin{table}[H]
+    \captionsetup{justification=centering}
+    \caption{  \label{tab:UC-ATH} Tableau comparatif des types d'e-commerce}
+    \centering
+    \begin{tabular} {|m{8em}|m{10em}|m{10em}|m{7em}|}
+    \hline
+    \textbf{Facteur} & \textbf{C2C} & \textbf{B2C} & \textbf{B2B} \\
+    \hline
+    \textbf{Clients} & Particuliers & Particuliers & Entreprises \\
+    \hline
+    \textbf{Nécessité de l'authentification} & OUI ou NON & OUI ou NON & OUI 0\\
+    \hline
+    \textbf{Points de concentration} & Les besoins personnels & Les affaires & Les besoins personnels \\
+    \hline
+    \textbf{Relation avec le client} & Instantanée & Long terme & Instantanée \\
+    \hline
+    \textbf{Prix de vente} & Fixe/négociable \linebreak Des dizaines de dinars
+                            & Varié \linebreak Dizaines et centaines de dinars & Fixe \linebreak Des milliers et millions de dinars \\
+    \hline
+    \textbf{Les règlements des prix} & Prix de marché négociable & Prix standard & Selon le client \\ \hline
+    \textbf{Durée de processus de vente} & Des heures & Des jours / semaines & Jusqu’à des mois \\ \hline
+    \textbf{Complexité de processus de vente} & Processus simple avec possibilité de négociation de prix et de modes de livraison & Moins simple et négociable & Un processus complexe avec un long contrat. \\ \hline
+    \textbf{Motivation} & Les émotions et besoins individuels & Les émotions et besoins individuels & Besoins commerciaux \\ \hline
+    \textbf{Objectifs} &    Présenter les biens et les services. \linebreak
+                            Présenter les solutions.\linebreak
+                            Créer une communauté de clients.
+                            & Montrer une grande variété des biens/services. \linebreak
+                            Présenter la marque.\linebreak
+                            Compétition.
+                            & Suggérer des solutions commerciales. \linebreak
+                            Vendre pour des grands clients.\\
+    \hline
+    \end{tabular}
+    \end{table}
+\subsection{Web Crawling }
+Un robot d'indexation \textbf{\cite{Crawler}} est un programme, souvent appelé bot ou robot, qui parcourt de manière systématique le Web pour collecter des données à partir des pages web. Les moteurs de recherche utilisent généralement des robots d'indexation pour construire leurs index.
+Pour bien comprendre le concept prenant comme exemple:
+\subsubsection{Googlebot:}
+Ce bot est un programme informatique qui "crawl" et indexe les pages internet.
+Il a deux missions:\\
+\textbf{- Explorer le web :} visiter les pages et suivre les liens contenus dans ces pages.\\
+\textbf{- Indexer les pages :} stocker le contenu de ces pages sur les serveurs de Google.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{images/crawler.png}
+    \caption{Pprincipe de Googlebot \cite{crawler}}
+    \label{fig:Global}  
+    \end{figure}
+\subsection{Web Scraping }
+Le web scraping \textbf{\cite{Scraper}} définit de façon générale une technique permettant d'extraire du contenu (des informations) d'un ou de plusieurs sites web de manière totalement automatique. Ce sont des scripts, des programmes informatiques, qui sont chargés d'extraire ces informations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\columnwidth]{images/Scraping.PNG}
+    \caption{Web Scraping \cite{scrape}}
+    \label{fig:Global}  
+    \end{figure}
+\subsection{Web crawling vs Web Scraping}
+Ce tableau va nous expliquer la difference entre le web crawler et le web scraper.
+
+\begin{longtable}[c]{|l|l|}
+\captionsetup{justification=centering}
+    \caption{  \label{tab:UC-ATH} Tableau comparatif entre Web crawling et Web scraping}
+    \centering
+	\hline
+	\rowcolor[HTML]{C0C0C0}
+	\textbf{Web crawling}                      & \textbf{Web scraping}                                                 \\ \hline
+	\endhead
+	\begin{tabular}[c]{m{18em}}\tabitem Indexer l’information des pages web en utilisant des robots.\\
+        \tabitem Utiliser par les principaux moteurs de recherche comme Google, Bing, Yahoo. \\
+        \tabitem Récupérer une information générique, alors que le scraping récupère une information spécifique.\end{tabular}         & \begin{tabular}[c]{m{18em}}\tabitem C'est un moyen automatisé d’extraire de l’information.
+        L’information peut être utilisée pour répliquer des sites Internet ou pour de l’analyse de donnée.\end{tabular}      
+        \\ \hline
+\end{longtable}
+
+%\section{Étude et critique de l’existant}
+%L'étude de l'existant est considérée comme une étape importante et elle doit être lancée avant la phase de conception. L’objectif est d’étudier des solutions existantes similaires à notre projet afin de les évaluer et de proposer des solutions plus complètes pour corriger les faiblesses de ce dernier.\\
+%DATAVORA dispose déjà d’un bot de crawl fonctionnel mais ce dernier n'est pas distribué. En plus, d'une part, il commence à dater puisqu'il est basé sur Scrapy 0.9 et Ubuntu 16.04 et d'autre part, il est de plus en plus blacklisté.
+
+Notre projet entre dans le cadre de \textbf{Web scraping}.
+
+\section{Méthodologie}
+Pour les membres de l'équipe, adopter une méthode de gestion de projet est une étape essentielle afin d'atteindre les objectifs attendus dans les délais. L'équipe a adopté la méthodologie Agile qui est une approche itérative et incrémentale, dotée d'une grande capacité d'adaptation aux changements et aux événements imprévus. L'objectif principal d'Agile est de remettre une version valide du produit au client dès que possible.
+Nous utilisons la méthode Scrum pour gérer nos projets.
+Toutes les deux semaines, tous les collaborateurs se rencontrent. Au cours de cette réunion, nous avons discuté de l'avancement du projet, évalué les éléments finis et non finis et nous avons à mettre à jour les travaux à faire.
+\section*{Conclusion}
+
+Ce chapitre nous a donné l’occasion d’introduire les notions de bases de notre projet. Nous avons présenté dans un premier lieu la société accueillante, puis nous avons mis le projet dans son contexte général. Ensuite, nous avons présenté l'existant et  enfin, nous avons exposé la solution objet de notre travail. Dans le chapitre suivant, nous allons faire une analyse préliminaire de la solution envisagée.
